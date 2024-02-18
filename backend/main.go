@@ -1,14 +1,15 @@
 package main
 
 import (
-	// "net/http"
-	//"tbl-backend/item"
 	"tbl-backend/controller/buy_item"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	router := gin.Default()
+
+	router.Use(cors.Default())
 
 	router.GET("/buy_items", buy_item.GetBuyItems)
 	router.GET("/buy_items/:id", buy_item.GetBuyItemById)

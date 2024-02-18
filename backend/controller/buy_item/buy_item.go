@@ -36,6 +36,7 @@ func PostBuyItem(c *gin.Context) {
 		return
 	}
 
+	newItem.ID = "123"
 	buyItems = append(buyItems, newItem)
 	c.IndentedJSON(http.StatusCreated, newItem)
 }
