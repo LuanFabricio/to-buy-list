@@ -6,20 +6,20 @@ import (
 	"tbl-backend/item"
 )
 
-var buyItems = []item.BuyItem {
+var BuyItems = []item.BuyItem {
 	{ ID: "32dsa", Name: "T1", CurrentQuantity: 1, MinQuantity: 1, SendEmail: true },
 	{ ID: "3-As2", Name: "T2", CurrentQuantity: 2, MinQuantity: 1, SendEmail: false },
 	{ ID: "sa32d", Name: "T3", CurrentQuantity: 3, MinQuantity: 1, SendEmail: true },
 }
 
 func GetBuyItems(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, buyItems)
+	c.IndentedJSON(http.StatusOK, BuyItems)
 }
 
 func GetBuyItemById(c *gin.Context) {
 	id := c.Param("id")
 
-	for _, a := range buyItems {
+	for _, a := range BuyItems {
 		if a.ID == id {
 			c.IndentedJSON(http.StatusOK, a)
 			return;
@@ -37,7 +37,7 @@ func PostBuyItem(c *gin.Context) {
 	}
 
 	newItem.ID = "123"
-	buyItems = append(buyItems, newItem)
+	BuyItems = append(BuyItems, newItem)
 	c.IndentedJSON(http.StatusCreated, newItem)
 }
 
@@ -49,10 +49,10 @@ func PutBuyItem(c *gin.Context) {
 		return;
 	}
 
-	for idx, a := range buyItems {
+	for idx, a := range BuyItems {
 		if a.ID == id {
-			buyItems[idx] = updatedItem
-			c.IndentedJSON(http.StatusOK, buyItems[idx])
+			BuyItems[idx] = updatedItem
+			c.IndentedJSON(http.StatusOK, BuyItems[idx])
 			return;
 		}
 	}
@@ -63,9 +63,9 @@ func PutBuyItem(c *gin.Context) {
 func DeleteBuyItem(c *gin.Context) {
 	id := c.Param("id")
 
-	for idx, a := range buyItems {
+	for idx, a := range BuyItems {
 		if a.ID == id {
-			buyItems = append(buyItems[:idx], buyItems[idx+1:]...)
+			BuyItems = append(BuyItems[:idx], BuyItems[idx+1:]...)
 			c.IndentedJSON(http.StatusOK, a)
 			return
 		}
