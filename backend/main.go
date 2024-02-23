@@ -2,12 +2,15 @@ package main
 
 import (
 	"tbl-backend/controller/buy_item"
+	"tbl-backend/database"
 	"tbl-backend/controller/to_buy_list"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	database.GetDbConnection()
+
 	router := gin.Default()
 
 	router.Use(cors.Default())
