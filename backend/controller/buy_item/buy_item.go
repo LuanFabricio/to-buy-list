@@ -1,10 +1,14 @@
 package buy_item
 
 import (
+	"database/sql"
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"tbl-backend/item"
+	"tbl-backend/database"
 )
+
+var db *sql.DB = database.GetDbConnection()
 
 var BuyItems = []item.BuyItem {
 	{ ID: "32dsa", Name: "T1", CurrentQuantity: 1, MinQuantity: 1, SendEmail: true },
@@ -36,9 +40,14 @@ func PostBuyItem(c *gin.Context) {
 		return
 	}
 
-	newItem.ID = "123"
-	BuyItems = append(BuyItems, newItem)
-	c.IndentedJSON(http.StatusCreated, newItem)
+	// BuyItems = append(BuyItems, newItem)
+	item, err := newItem.Insert(db)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+		return
+	}
+
+	c.IndentedJSON(http.StatusCreated, *item)
 }
 
 func PutBuyItem(c *gin.Context) {
