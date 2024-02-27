@@ -21,6 +21,7 @@ $createForm.addEventListener("submit",
 		const $name = document.querySelector("#create-form #name");
 		const $current_quantity = document.querySelector("#create-form #current_quantity");
 		const $min_quantity = document.querySelector("#create-form #min_quantity");
+		/** @type {HTMLInputElement} */
 		const $send_email = document.querySelector("#create-form #send_email");
 
 		/** @type {BuyItem} */
@@ -29,17 +30,28 @@ $createForm.addEventListener("submit",
 			name: $name.value,
 			current_quantity: Number($current_quantity.value),
 			min_quantity: Number($min_quantity.value),
-			send_email: $send_email.value === "on",
+			send_email: $send_email.checked,
 		};
 
 		postBuyItem(newItem).then(_ => {
 			fetchBuyItems().then(r => {
-				loadItems(r);
+				loadItems("items-list", r);
+			});
+			fetchToBuyItems().then(r => {
+				loadItems("to-buy-list", r);
 			});
 		});
 	}, 
 	true
 );
+
+/**
+* @returns { Promise<BuyItem[]> }
+* */
+async function fetchToBuyItems() {
+	const toBuyItems = await fetch("http://localhost:3000/to_buy_list");
+	return await toBuyItems.json();
+}
 
 async function fetchBuyItems() {
 	const buyItems = await fetch("http://localhost:3000/buy_items");
@@ -59,14 +71,16 @@ async function postBuyItem(newBuyItem) {
 	return response;
 }
 
-/** @param {BuyItem[]} buyItems  */
-function loadItems(buyItems) {
-	let $list = document.getElementById("items-list");
+/** 
+* @param {BuyItem[]} buyItems  
+* @param {string} listId 
+* */
+function loadItems(listId, buyItems) {
+	let $list = document.getElementById(listId);
 
-	console.log($list);
 	if ($list == null) {
 		$list = document.createElement("ul");
-		$list.id = "items-list";
+		$list.id = listId;
 		$root.appendChild($list);
 	}
 	$list.innerHTML = "";
@@ -78,19 +92,16 @@ function loadItems(buyItems) {
 	}
 }
 
-fetchBuyItems().then(r => {
-	console.log(r);
-	loadItems(r);
+fetchBuyItems().then(
+	/** @param {BuyItem[]} to_buy_list  */
+	(totalItems) => {
+		loadItems("items-list", totalItems);
+	}
+);
 
-	postBuyItem({ id: "3", name: "T4", current_quantity: 42, min_quantity: 1, send_email: true }).then(r => {
-		console.log(r);
-
-		if (r.status == 201) {
-			fetchBuyItems().then(r => {
-				loadItems(r);
-			})
-		}
-	});
-})
-
-
+fetchToBuyItems().then(
+	/** @param {BuyItem[]} to_buy_list  */
+	(toBuyItems) => {
+		loadItems("to-buy-list", toBuyItems);
+	}
+);
