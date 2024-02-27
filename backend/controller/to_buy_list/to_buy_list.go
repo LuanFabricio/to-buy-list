@@ -19,7 +19,7 @@ func GetToBuyList(c *gin.Context) {
 		return
 	}
 
-	var buy_list []item.BuyItem
+	var buy_list []item.BuyItem = []item.BuyItem{}
 	var buy_item item.BuyItem
 	for rows.Next(){
 		rows.Scan(&buy_item.ID, &buy_item.Name, &buy_item.CurrentQuantity, &buy_item.MinQuantity, &buy_item.SendEmail)
