@@ -1,17 +1,30 @@
-package to_buy_list;
+package to_buy_list
 
 import (
+	"database/sql"
 	"net/http"
-	"github.com/gin-gonic/gin"
+	"tbl-backend/database"
 	"tbl-backend/item"
-	"tbl-backend/controller/buy_item"
+
+	"github.com/gin-gonic/gin"
 )
 
+var db *sql.DB = database.GetDbConnection()
+
 func GetToBuyList(c *gin.Context) {
-	buy_list := make([]item.BuyItem, 0)
-	for _, i := range buy_item.BuyItems {
-		if i.CurrentQuantity < i.MinQuantity {
-			buy_list = append(buy_list, i)
+	rows, err := db.Query("SELECT * FROM items")
+
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+		return
+	}
+
+	var buy_list []item.BuyItem
+	var buy_item item.BuyItem
+	for rows.Next(){
+		rows.Scan(&buy_item.ID, &buy_item.Name, &buy_item.CurrentQuantity, &buy_item.MinQuantity, &buy_item.SendEmail)
+		if buy_item.CurrentQuantity < buy_item.MinQuantity {
+			buy_list = append(buy_list, buy_item)
 		}
 	}
 
