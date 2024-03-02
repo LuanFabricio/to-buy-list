@@ -37,10 +37,20 @@ func GetBuyItems(c *gin.Context) {
 func GetBuyItemById(c *gin.Context) {
 	id := c.Param("id")
 
-	for _, a := range BuyItems {
-		if a.ID == id {
-			c.IndentedJSON(http.StatusOK, a)
-			return;
+	res, err := db.Query("SELECT * FROM items")
+
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+		return;
+	}
+
+	var item item.BuyItem
+	for res.Next() {
+		res.Scan(&item.ID, &item.Name, &item.CurrentQuantity, &item.MinQuantity, &item.SendEmail)
+
+		if (item.ID == id) {
+			c.IndentedJSON(http.StatusOK, item)
+			return
 		}
 	}
 
@@ -54,7 +64,6 @@ func PostBuyItem(c *gin.Context) {
 		return
 	}
 
-	// BuyItems = append(BuyItems, newItem)
 	item, err := newItem.Insert(db)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
