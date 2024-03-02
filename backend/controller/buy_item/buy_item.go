@@ -81,12 +81,25 @@ func PutBuyItem(c *gin.Context) {
 		return;
 	}
 
-	for idx, a := range BuyItems {
-		if a.ID == id {
-			BuyItems[idx] = updatedItem
-			c.IndentedJSON(http.StatusOK, BuyItems[idx])
-			return;
-		}
+	res, err := db.Query(`
+		UPDATE items
+		SET name = $1, current_quantity = $2, min_quantity = $3, send_email = $4
+		WHERE id = $5
+		RETURNING *`,
+		updatedItem.Name, updatedItem.CurrentQuantity,
+		updatedItem.MinQuantity, updatedItem.SendEmail,
+		id);
+
+	if err != nil{
+		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+		return;
+	}
+
+	if res.Next() {
+		var newItem item.BuyItem
+		res.Scan(&newItem.ID, &newItem.Name, &newItem.CurrentQuantity, &newItem.MinQuantity, &newItem.SendEmail)
+		c.IndentedJSON(http.StatusOK, updatedItem)
+		return
 	}
 
 	c.IndentedJSON(http.StatusNotFound, gin.H { "message": "Item not found." })
