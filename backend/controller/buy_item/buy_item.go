@@ -108,12 +108,18 @@ func PutBuyItem(c *gin.Context) {
 func DeleteBuyItem(c *gin.Context) {
 	id := c.Param("id")
 
-	for idx, a := range BuyItems {
-		if a.ID == id {
-			BuyItems = append(BuyItems[:idx], BuyItems[idx+1:]...)
-			c.IndentedJSON(http.StatusOK, a)
-			return
-		}
+	res, err := db.Query("DELETE FROM items WHERE id=$1 RETURNING *", id)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+		return
+	}
+
+	if res.Next() {
+		var deletedItem item.BuyItem
+		res.Scan(&deletedItem.ID, &deletedItem.Name, &deletedItem.CurrentQuantity, &deletedItem.MinQuantity, &deletedItem.SendEmail)
+		c.IndentedJSON(http.StatusOK, deletedItem)
+		return
 	}
 
 	c.IndentedJSON(http.StatusNotFound, gin.H { "message": "Item not found." })
