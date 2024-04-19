@@ -87,8 +87,16 @@ function loadItems(listId, buyItems) {
 
 	for (const { id, name, current_quantity, min_quantity, send_email} of buyItems) {
 		const $item = document.createElement("li");
-		$item.innerText = `[${id}]${name}: ${current_quantity}/${min_quantity} [${send_email}]`;
-		$list.appendChild($item);
+		const $div = document.createElement("div");
+		const $checkbox = document.createElement("input");
+		$checkbox.type = "checkbox";
+
+		$item.innerText += `[${id}]${name}: ${current_quantity}/${min_quantity} [${send_email}]`;
+		$div.style = 'display: flex;'
+		$div.appendChild($checkbox);
+		$div.appendChild($item);
+
+		$list.appendChild($div);
 	}
 }
 
