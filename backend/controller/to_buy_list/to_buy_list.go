@@ -23,7 +23,7 @@ func GetToBuyList(c *gin.Context) {
 	var buy_item item.BuyItem
 	for rows.Next(){
 		rows.Scan(&buy_item.ID, &buy_item.Name, &buy_item.CurrentQuantity, &buy_item.MinQuantity, &buy_item.SendEmail)
-		if buy_item.CurrentQuantity < buy_item.MinQuantity {
+		if buy_item.CurrentQuantity <= buy_item.MinQuantity {
 			buy_list = append(buy_list, buy_item)
 		}
 	}
