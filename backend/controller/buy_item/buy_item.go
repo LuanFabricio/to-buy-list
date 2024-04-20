@@ -10,12 +10,6 @@ import (
 
 var db *sql.DB = database.GetDbConnection()
 
-var BuyItems = []item.BuyItem {
-	{ ID: "32dsa", Name: "T1", CurrentQuantity: 1, MinQuantity: 1, SendEmail: true },
-	{ ID: "3-As2", Name: "T2", CurrentQuantity: 2, MinQuantity: 1, SendEmail: false },
-	{ ID: "sa32d", Name: "T3", CurrentQuantity: 3, MinQuantity: 1, SendEmail: true },
-}
-
 func GetBuyItems(c *gin.Context) {
 	res, err := db.Query("SELECT * FROM items")
 
