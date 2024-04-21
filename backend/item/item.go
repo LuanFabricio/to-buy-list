@@ -1,7 +1,6 @@
 package item
 
 import (
-	"log"
 	"database/sql"
 	"fmt"
 )
@@ -20,25 +19,23 @@ func FindItems(db* sql.DB)  ([]BuyItem, error) {
 }
 
 func (bi* BuyItem) Insert(db* sql.DB) (*BuyItem, error) {
-	var id uint32
-	db.QueryRow(
-		`INSERT INTO items (name, current_quantity, min_quantity, send_email)
-		VALUES($1, $2, $3, $4)
-		RETURNING id`,
-		bi.Name, bi.CurrentQuantity, bi.MinQuantity, bi.SendEmail).Scan(&id)
-
-	bi.ID = fmt.Sprint(id)
-
-	row := db.QueryRow("SELECT * FROM items WHERE id = $1", id)
-
 	var (
+		id uint32
 		name string
 		current_quantity uint64
 		min_quantity uint64
 		send_email bool
 	)
-	if err := row.Scan(&id, &name, &current_quantity, &min_quantity, &send_email); err != nil {
-		log.Fatal(err)
+
+	err := db.QueryRow(
+		`INSERT INTO items (name, current_quantity, min_quantity, send_email)
+		VALUES($1, $2, $3, $4)
+		RETURNING id, name, current_quantity, min_quantity, send_email`,
+		bi.Name, bi.CurrentQuantity, bi.MinQuantity, bi.SendEmail,
+	).Scan(&id, &name, &current_quantity, &min_quantity, &send_email)
+
+	if err != nil {
+		return nil, err
 	}
 
 	return &BuyItem {
