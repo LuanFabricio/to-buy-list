@@ -15,7 +15,25 @@ type BuyItem struct {
 
 func FindItems(db* sql.DB)  ([]BuyItem, error) {
 
-	return []BuyItem{}, nil
+	row, err := db.Query("SELECT id, name, current_quantity, min_quantity, send_email FROM items")
+	defer row.Close()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var item BuyItem
+	items := []BuyItem{}
+	for row.Next() {
+		err = row.Scan(&item.ID, &item.Name, &item.CurrentQuantity, &item.MinQuantity, &item.SendEmail)
+		if err != nil {
+			return nil, err
+		}
+
+		items = append(items, item)
+	}
+
+	return items, nil
 }
 
 func (bi* BuyItem) Insert(db* sql.DB) (*BuyItem, error) {
