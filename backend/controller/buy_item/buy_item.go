@@ -11,18 +11,12 @@ import (
 var db *sql.DB = database.GetDbConnection()
 
 func GetBuyItems(c *gin.Context) {
-	res, err := db.Query("SELECT * FROM items")
+
+	buyItems, err := item.FindItems(db)
 
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
-		return
-	}
-
-	buyItems := []item.BuyItem{}
-	for res.Next() {
-		var b item.BuyItem
-		res.Scan(&b.ID, &b.Name, &b.CurrentQuantity, &b.MinQuantity, &b.SendEmail)
-		buyItems = append(buyItems, b)
+	 	c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+	 	return
 	}
 
 	c.IndentedJSON(http.StatusOK, buyItems)
