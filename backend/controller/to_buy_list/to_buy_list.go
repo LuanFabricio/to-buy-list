@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 	"tbl-backend/database"
-	"tbl-backend/item"
+	"tbl-backend/models/item"
 
 	"github.com/gin-gonic/gin"
 )

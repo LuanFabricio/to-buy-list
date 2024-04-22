@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 	"tbl-backend/database"
-	"tbl-backend/user"
+	"tbl-backend/models/user"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
