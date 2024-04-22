@@ -1,9 +1,9 @@
 package main
 
 import (
-	"tbl-backend/controller/buy_item"
-	"tbl-backend/controller/to_buy_list"
-	"tbl-backend/controller/user"
+	"tbl-backend/controllers/buy_item"
+	"tbl-backend/controllers/to_buy_list"
+	"tbl-backend/controllers/user"
 	"tbl-backend/database"
 
 	"github.com/gin-contrib/cors"
