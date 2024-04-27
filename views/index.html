@@ -6,7 +6,7 @@
 	<script src="https://unpkg.com/htmx.org@1.9.12"></script>
 </header>
 <body>
-	<form hx-swap="innerHTML" hx-target="#to-buy-items" hx-post="/buy_items" id="create-form">
+	<form hx-swap="innerHTML" hx-target="#items-list" hx-post="/buy_items" id="create-form">
 		<span>
 			<label>Nome: </label>
 			<input name="name" id="name" type="text">
@@ -28,16 +28,22 @@
 
 	<hr>
 
-	<div id="buy-items">
-		{{ template "buy-items" . }}
+	<div id="items-list">
+		{{ template "items-list" . }}
 	</div>
-
-	<hr>
-
-	<form id="to-buy-items" hx-post="/">
-		{{ template "to-buy-items" . }}
-	</form>
 </body>
+{{ end }}
+
+{{ block "items-list" . }}
+<div id="buy-items">
+	{{ template "buy-items" . }}
+</div>
+
+<hr>
+
+<form id="to-buy-items" hx-post="/">
+	{{ template "to-buy-items" . }}
+</form>
 {{ end }}
 
 {{ block "buy-items" . }}
