@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"net/http"
 	"tbl-backend/database"
-	"tbl-backend/models/item"
 	"tbl-backend/services/to_buy_list"
 
 	"github.com/gin-gonic/gin"
