@@ -3,9 +3,14 @@ package buy_item
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
-	"tbl-backend/models/item"
+
 	"tbl-backend/database"
+	"tbl-backend/models/item"
+	"tbl-backend/models/views"
+	"tbl-backend/services/to_buy_list"
 )
 
 var db *sql.DB = database.GetDbConnection()
@@ -48,17 +53,58 @@ func GetBuyItemById(c *gin.Context) {
 func PostBuyItem(c *gin.Context) {
 	var newItem item.BuyItem
 
-	if err := c.BindJSON(&newItem); err != nil {
+	if (c.GetHeader("Content-Type") == "application/json") {
+		if err := c.BindJSON(&newItem); err != nil {
+			return
+		}
+
+		item, err := newItem.Insert(db)
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+			return
+		}
+
+		c.IndentedJSON(http.StatusCreated, *item)
+		return
+	} else if (c.GetHeader("Content-Type") == "application/x-www-form-urlencoded") {
+		newItem.ID = "0"
+		newItem.Name = c.PostForm("name")
+
+		currentQuantity, _ := strconv.ParseUint(c.PostForm("current_quantity"), 10, 32)
+		newItem.CurrentQuantity = uint32(currentQuantity)
+
+		minQuantity, _ := strconv.ParseUint(c.PostForm("min_quantity"), 10, 32)
+		newItem.MinQuantity = uint32(minQuantity)
+
+		newItem.SendEmail, _ = strconv.ParseBool(c.PostForm("send_email"))
+
+		_, err := newItem.Insert(db)
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+			return
+		}
+
+		buyItems, err := item.FindItems(db)
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+			return
+		}
+
+		toBuyItems, err := to_buy_list.FetchToBuyList(db)
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+			return
+		}
+
+		vwIndex := views.ViewIndex { BuyItems: buyItems, ToBuyItems: toBuyItems }
+
+		c.HTML(http.StatusOK, "to-buy-items", vwIndex)
 		return
 	}
 
-	item, err := newItem.Insert(db)
-	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
-		return
-	}
-
-	c.IndentedJSON(http.StatusCreated, *item)
+	c.IndentedJSON(http.StatusBadRequest, gin.H {
+		"message": "Please, use application/json or application/x-www-form-urlencoded as Content-Type value",
+	})
 }
 
 func PutBuyItem(c *gin.Context) {
