@@ -58,13 +58,9 @@ func PostBuyItem(c *gin.Context) {
 			return
 		}
 
-		item, err := newItem.Insert(db)
-		if err != nil {
-			c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
-			return
+		if item := postBuyItem(c, newItem); item != nil {
+			c.IndentedJSON(http.StatusCreated, *item)
 		}
-
-		c.IndentedJSON(http.StatusCreated, *item)
 		return
 	} else if (c.GetHeader("Content-Type") == "application/x-www-form-urlencoded") {
 		newItem.ID = "0"
@@ -78,9 +74,7 @@ func PostBuyItem(c *gin.Context) {
 
 		newItem.SendEmail, _ = strconv.ParseBool(c.PostForm("send_email"))
 
-		_, err := newItem.Insert(db)
-		if err != nil {
-			c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+		if item := postBuyItem(c, newItem); item == nil {
 			return
 		}
 
@@ -98,7 +92,7 @@ func PostBuyItem(c *gin.Context) {
 
 		vwIndex := views.ViewIndex { BuyItems: buyItems, ToBuyItems: toBuyItems }
 
-		c.HTML(http.StatusOK, "to-buy-items", vwIndex)
+		c.HTML(http.StatusOK, "items-list", vwIndex)
 		return
 	}
 
@@ -157,4 +151,14 @@ func DeleteBuyItem(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusNotFound, gin.H { "message": "Item not found." })
+}
+
+func postBuyItem(c *gin.Context, newItem item.BuyItem) (*item.BuyItem){
+	item, err := newItem.Insert(db)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+		return nil
+	}
+
+	return item
 }
