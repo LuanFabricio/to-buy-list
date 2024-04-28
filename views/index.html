@@ -6,26 +6,7 @@
 	<script src="https://unpkg.com/htmx.org@1.9.12"></script>
 </header>
 <body>
-	<form hx-swap="innerHTML" hx-target="#items-list" hx-post="/buy_items" id="create-form">
-		<span>
-			<label>Nome: </label>
-			<input name="name" id="name" type="text">
-		</span>
-		<span>
-			<label>Quantidade atual: </label>
-			<input name="current_quantity" id="current_quantity" type="number">
-		</span>
-		<span>
-			<label>Quantidade mínima: </label>
-			<input name="min_quantity" id="min_quantity" type="number">
-		</span>
-		<span>
-			<label>Enviar para o e-mail: </label>
-			<input name="send_email" id="send_email" type="checkbox">
-		</span>
-		<input type="submit" value="Submit">
-	</form>
-
+	{{ template "form" . }}
 	<hr>
 
 	<div id="items-list">
@@ -34,31 +15,30 @@
 </body>
 {{ end }}
 
-{{ block "items-list" . }}
-<div id="buy-items">
-	{{ template "buy-items" . }}
-</div>
-
-<hr>
-
-<form id="to-buy-items" hx-post="/">
-	{{ template "to-buy-items" . }}
+{{ block "form" . }}
+<form hx-swap="outerHTML" hx-post="/buy_items" id="create-form">
+	<span>
+		<label>Nome: </label>
+		<input name="name" id="name" type="text">
+	</span>
+	<span>
+		<label>Quantidade atual: </label>
+		<input name="current_quantity" id="current_quantity" type="number">
+	</span>
+	<span>
+		<label>Quantidade mínima: </label>
+		<input name="min_quantity" id="min_quantity" type="number">
+	</span>
+	<span>
+		<label>Enviar para o e-mail: </label>
+		<input name="send_email" id="send_email" type="checkbox">
+	</span>
+	<input type="submit" value="Submit">
 </form>
 {{ end }}
 
-{{ block "buy-items" . }}
-{{range $i, $a := .BuyItems }}
-<div>
-	<input name="buy-item-{{$a.ID}}"  type="checkbox"> [{{ $a.ID }}] {{ $a.Name }} {{$a.CurrentQuantity}}/{{$a.MinQuantity}} [{{$a.SendEmail}}]
+{{ block "items-list" . }}
+<div id="buy-items-list">
+	{{ template "buy-items-list" . }}
 </div>
-{{end}}
-{{ end }}
-
-{{ block "to-buy-items" . }}
-{{range $i, $a := .ToBuyItems }}
-<div>
-	<input name="to-buy-item-{{$a.ID}}"  type="checkbox"> [{{ $a.ID }}] {{ $a.Name }} {{$a.CurrentQuantity}}/{{$a.MinQuantity}} [{{$a.SendEmail}}]
-</div>
-{{end}}
-<button type="submit"A>Submit</button>
 {{ end }}

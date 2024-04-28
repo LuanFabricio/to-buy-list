@@ -1,0 +1,19 @@
+{{ block "buy-items-list" . }}
+<div id="buy-item">
+	{{range .BuyItems }}
+	{{ template "buy-item" . }}
+	{{end}}
+</div>
+{{ end }}
+
+{{ block "buy-item" . }}
+<div>
+	<input name="buy-item-{{.ID}}"  type="checkbox"> [{{ .ID }}] {{ .Name }} {{.CurrentQuantity}}/{{.MinQuantity}} [{{.SendEmail}}]
+</div>
+{{ end }}
+
+{{ block "oob-buy-item" . }}
+<div id="buy-item" hx-swap-oob="afterend">
+	{{ template "buy-item" . }}
+</div>
+{{ end }}
