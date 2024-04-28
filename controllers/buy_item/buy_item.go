@@ -9,8 +9,8 @@ import (
 
 	"tbl-backend/database"
 	"tbl-backend/models/item"
-	"tbl-backend/models/views"
-	"tbl-backend/services/to_buy_list"
+	// "tbl-backend/models/views"
+	// "tbl-backend/services/to_buy_list"
 )
 
 var db *sql.DB = database.GetDbConnection()
@@ -74,25 +74,14 @@ func PostBuyItem(c *gin.Context) {
 
 		newItem.SendEmail, _ = strconv.ParseBool(c.PostForm("send_email"))
 
-		if item := postBuyItem(c, newItem); item == nil {
+		buyItem := postBuyItem(c, newItem)
+		if buyItem == nil {
 			return
 		}
 
-		buyItems, err := item.FindItems(db)
-		if err != nil {
-			c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
-			return
-		}
-
-		toBuyItems, err := to_buy_list.FetchToBuyList(db)
-		if err != nil {
-			c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
-			return
-		}
-
-		vwIndex := views.ViewIndex { BuyItems: buyItems, ToBuyItems: toBuyItems }
-
-		c.HTML(http.StatusOK, "items-list", vwIndex)
+		c.HTML(http.StatusOK, "form", nil)
+		c.HTML(http.StatusOK, "oob-buy-item", buyItem)
+		// c.HTML(http.StatusOK, "oob-to-buy-item", buyItem)
 		return
 	}
 
