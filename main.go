@@ -13,6 +13,8 @@ import (
 func main() {
 	router := gin.Default()
 
+	router.Static("/static", "./views/static/")
+
 	router.Use(cors.Default())
 	router.LoadHTMLGlob("views/*.html")
 
