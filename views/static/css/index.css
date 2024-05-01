@@ -1,4 +1,4 @@
-form {
+#new-item-form {
 	display: flex;
 	align-items: flex-end;
 	flex-direction: column;
