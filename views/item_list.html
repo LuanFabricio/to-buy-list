@@ -8,7 +8,16 @@
 
 {{ block "buy-item" . }}
 <div>
-	<input name="buy-item-{{.ID}}"  type="checkbox"> [{{ .ID }}] {{ .Name }} {{.CurrentQuantity}}/{{.MinQuantity}} [{{.SendEmail}}]
+	<form hx-put="/buy_items/{{ .ID }}">
+		<div style="display: flex;">
+			<input name="send_email"
+				type="checkbox"
+				{{ if .SendEmail }} checked {{ end }}>
+
+				[{{ .ID }}] {{ .Name }} {{.CurrentQuantity}}/{{.MinQuantity}} [{{.SendEmail}}]
+			<input type="submit" value="Submit">
+		</div>
+	</form>
 </div>
 {{ end }}
 
@@ -16,4 +25,8 @@
 <div id="buy-item" hx-swap-oob="afterend">
 	{{ template "buy-item" . }}
 </div>
+{{ end }}
+
+{{ block "error-buy-item" . }}
+<div style="color: red;">Algo de certo não está errado...</div>
 {{ end }}
