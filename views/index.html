@@ -16,7 +16,7 @@
 {{ end }}
 
 {{ block "form" . }}
-<form hx-swap="outerHTML" hx-post="/buy_items" id="create-form">
+<form id="new-item-form" hx-swap="outerHTML" hx-post="/buy_items" id="create-form">
 	<span>
 		<label>Nome: </label>
 		<input name="name" id="name" type="text">
