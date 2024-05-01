@@ -72,7 +72,7 @@ func PostBuyItem(c *gin.Context) {
 		minQuantity, _ := strconv.ParseUint(c.PostForm("min_quantity"), 10, 32)
 		newItem.MinQuantity = uint32(minQuantity)
 
-		newItem.SendEmail, _ = strconv.ParseBool(c.PostForm("send_email"))
+		newItem.SendEmail = c.PostForm("send_email") == "on"
 
 		buyItem := postBuyItem(c, newItem)
 		if buyItem == nil {
@@ -94,30 +94,53 @@ func PutBuyItem(c *gin.Context) {
 	id := c.Param("id")
 	var updatedItem item.BuyItem
 
-	if err := c.BindJSON(&updatedItem); err != nil {
-		return;
-	}
+	if c.GetHeader("Content-Type") == "application/json" {
+		if err := c.BindJSON(&updatedItem); err != nil {
+			return;
+		}
 
-	res, err := db.Query(`
-		UPDATE items
-		SET name = $1, current_quantity = $2, min_quantity = $3, send_email = $4
-		WHERE id = $5
-		RETURNING *`,
-		updatedItem.Name, updatedItem.CurrentQuantity,
-		updatedItem.MinQuantity, updatedItem.SendEmail,
-		id);
+		updatedItem := putBuyItem(c, &updatedItem)
 
-	if err != nil{
-		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
-		return;
-	}
+		if updatedItem != nil {
+			c.IndentedJSON(http.StatusOK, updatedItem)
+			return
+		}
+	} else if (c.GetHeader("Content-Type") == "application/x-www-form-urlencoded") {
+		updatedItem, err := item.FindItem(id, db)
 
-	if res.Next() {
-		var newItem item.BuyItem
-		res.Scan(&newItem.ID, &newItem.Name, &newItem.CurrentQuantity, &newItem.MinQuantity, &newItem.SendEmail)
-		c.IndentedJSON(http.StatusOK, updatedItem)
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+			return
+		}
+
+		if postName := c.PostForm("name"); postName != "" {
+			updatedItem.Name = postName
+		}
+
+		if currentQuantity := c.PostForm("current_quantity"); currentQuantity != "" {
+			currentQuantity, _ := strconv.ParseUint(currentQuantity, 10, 32)
+			updatedItem.CurrentQuantity = uint32(currentQuantity)
+		}
+
+		if minQuantity := c.PostForm("current_quantity"); minQuantity != "" {
+			minQuantity, _ := strconv.ParseUint(minQuantity, 10, 32)
+			updatedItem.CurrentQuantity = uint32(minQuantity)
+		}
+
+		postSendEmail := c.PostForm("send_email")
+		updatedItem.SendEmail = postSendEmail == "on"
+
+		updatedItem = putBuyItem(c, updatedItem)
+
+		if updatedItem == nil {
+			c.HTML(http.StatusOK, "error-buy-item", nil)
+			return
+		}
+
+		c.HTML(http.StatusOK, "buy-item", updatedItem)
 		return
 	}
+
 
 	c.IndentedJSON(http.StatusNotFound, gin.H { "message": "Item not found." })
 }
@@ -140,6 +163,7 @@ func DeleteBuyItem(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusNotFound, gin.H { "message": "Item not found." })
+	return
 }
 
 func postBuyItem(c *gin.Context, newItem item.BuyItem) (*item.BuyItem){
@@ -150,4 +174,15 @@ func postBuyItem(c *gin.Context, newItem item.BuyItem) (*item.BuyItem){
 	}
 
 	return item
+}
+
+func putBuyItem(c *gin.Context, updatedItem* item.BuyItem) (*item.BuyItem) {
+	updatedItem, err := updatedItem.Update(db)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+		return nil
+	}
+
+	return updatedItem
 }
