@@ -122,9 +122,9 @@ func PutBuyItem(c *gin.Context) {
 			updatedItem.CurrentQuantity = uint32(currentQuantity)
 		}
 
-		if minQuantity := c.PostForm("current_quantity"); minQuantity != "" {
+		if minQuantity := c.PostForm("min_quantity"); minQuantity != "" {
 			minQuantity, _ := strconv.ParseUint(minQuantity, 10, 32)
-			updatedItem.CurrentQuantity = uint32(minQuantity)
+			updatedItem.MinQuantity = uint32(minQuantity)
 		}
 
 		postSendEmail := c.PostForm("send_email")
