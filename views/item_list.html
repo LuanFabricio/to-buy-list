@@ -13,8 +13,15 @@
 			<input name="send_email"
 				type="checkbox"
 				{{ if .SendEmail }} checked {{ end }}>
-
-				[{{ .ID }}] {{ .Name }} {{.CurrentQuantity}}/{{.MinQuantity}} [{{.SendEmail}}]
+				[{{ .ID }}]
+			<input name="name"
+				value="{{ .Name }}">
+			<input name="current_quantity"
+				value="{{.CurrentQuantity}}">
+			/
+			<input name="min_quantity"
+				value="{{.MinQuantity}}">
+			[{{.SendEmail}}]
 			<input type="submit" value="Submit">
 		</div>
 	</form>
