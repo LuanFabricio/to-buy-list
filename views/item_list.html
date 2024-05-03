@@ -9,21 +9,27 @@
 {{ block "buy-item" . }}
 <div>
 	<form hx-put="/buy_items/{{ .ID }}">
-		<div style="display: flex;">
-			<input name="send_email"
-				type="checkbox"
-				{{ if .SendEmail }} checked {{ end }}>
-				[{{ .ID }}]
-			<input name="name"
-				value="{{ .Name }}">
-			<input name="current_quantity"
-				value="{{.CurrentQuantity}}">
-			/
-			<input name="min_quantity"
-				value="{{.MinQuantity}}">
-			[{{.SendEmail}}]
-			<input type="submit" value="Submit">
+		[{{ .ID }}]{{ .Name }}
+		<div class="input-group mb-3">
+			<input class="form-control"
+			name="name" type="text"
+			value="{{ .Name }}">
 		</div>
+		<div class="input-group mb-3">
+			<input class="form-control"
+			name="current_quantity"
+			type="number"
+			value="{{.CurrentQuantity}}">
+		</div>
+		<div class="input-group mb-3">
+			<input name="min_quantity"
+			value="{{.MinQuantity}}">
+		</div>
+		Send E-mail
+		<input name="send_email"
+			type="checkbox"
+			{{ if .SendEmail }} checked {{ end }}>
+		<input type="submit" value="Submit">
 	</form>
 </div>
 {{ end }}
