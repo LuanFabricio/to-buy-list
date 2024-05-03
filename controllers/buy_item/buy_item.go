@@ -3,7 +3,6 @@ package buy_item
 import (
 	"database/sql"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -132,10 +131,15 @@ func DeleteBuyItem(c *gin.Context) {
 		return
 	}
 
-	if res.Next() {
-		var deletedItem item.BuyItem
-		res.Scan(&deletedItem.ID, &deletedItem.Name, &deletedItem.CurrentQuantity, &deletedItem.MinQuantity, &deletedItem.SendEmail)
-		c.IndentedJSON(http.StatusOK, deletedItem)
+	if c.GetHeader("Content-Type") == "application/json" {
+		if res.Next() {
+			var deletedItem item.BuyItem
+			res.Scan(&deletedItem.ID, &deletedItem.Name, &deletedItem.CurrentQuantity, &deletedItem.MinQuantity, &deletedItem.SendEmail)
+			c.IndentedJSON(http.StatusOK, deletedItem)
+			return
+		}
+	} else if c.GetHeader("Content-Type") == "application/x-www-form-urlencoded" {
+		c.HTML(http.StatusOK, "", nil)
 		return
 	}
 
