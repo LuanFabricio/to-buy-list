@@ -63,16 +63,8 @@ func PostBuyItem(c *gin.Context) {
 		}
 		return
 	} else if (c.GetHeader("Content-Type") == "application/x-www-form-urlencoded") {
-		newItem.ID = "0"
-		newItem.Name = c.PostForm("name")
 
-		currentQuantity, _ := strconv.ParseUint(c.PostForm("current_quantity"), 10, 32)
-		newItem.CurrentQuantity = uint32(currentQuantity)
-
-		minQuantity, _ := strconv.ParseUint(c.PostForm("min_quantity"), 10, 32)
-		newItem.MinQuantity = uint32(minQuantity)
-
-		newItem.SendEmail = c.PostForm("send_email") == "on"
+		newItem.LoadFromForm(c)
 
 		buyItem := postBuyItem(c, newItem)
 		if buyItem == nil {
@@ -113,22 +105,7 @@ func PutBuyItem(c *gin.Context) {
 			return
 		}
 
-		if postName := c.PostForm("name"); postName != "" {
-			updatedItem.Name = postName
-		}
-
-		if currentQuantity := c.PostForm("current_quantity"); currentQuantity != "" {
-			currentQuantity, _ := strconv.ParseUint(currentQuantity, 10, 32)
-			updatedItem.CurrentQuantity = uint32(currentQuantity)
-		}
-
-		if minQuantity := c.PostForm("min_quantity"); minQuantity != "" {
-			minQuantity, _ := strconv.ParseUint(minQuantity, 10, 32)
-			updatedItem.MinQuantity = uint32(minQuantity)
-		}
-
-		postSendEmail := c.PostForm("send_email")
-		updatedItem.SendEmail = postSendEmail == "on"
+		updatedItem.LoadFromForm(c)
 
 		updatedItem = putBuyItem(c, updatedItem)
 

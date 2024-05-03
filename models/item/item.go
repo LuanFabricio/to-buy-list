@@ -3,6 +3,9 @@ package item
 import (
 	"database/sql"
 	"fmt"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 type BuyItem struct {
@@ -104,4 +107,28 @@ func (bi* BuyItem) Update(db* sql.DB) (*BuyItem, error) {
 	}
 
 	return nil, nil
+}
+
+func (bi* BuyItem) LoadFromForm(c *gin.Context) {
+	if postId := c.PostForm("id"); postId != "" {
+		bi.Name = postId
+	}
+
+	if postName := c.PostForm("name"); postName != "" {
+		bi.Name = postName
+	}
+
+	if currentQuantity := c.PostForm("current_quantity"); currentQuantity != "" {
+		currentQuantity, _ := strconv.ParseUint(currentQuantity, 10, 32)
+		bi.CurrentQuantity = uint32(currentQuantity)
+	}
+
+	if minQuantity := c.PostForm("min_quantity"); minQuantity != "" {
+		minQuantity, _ := strconv.ParseUint(minQuantity, 10, 32)
+		bi.MinQuantity = uint32(minQuantity)
+	}
+
+	postSendEmail := c.PostForm("send_email")
+	bi.SendEmail = postSendEmail == "on"
+
 }
