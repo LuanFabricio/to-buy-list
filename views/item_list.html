@@ -7,29 +7,43 @@
 {{ end }}
 
 {{ block "buy-item" . }}
-<div>
-	<form hx-put="/buy_items/{{ .ID }}">
-		[{{ .ID }}]{{ .Name }}
-		<div class="input-group mb-3">
-			<input class="form-control"
-			name="name" type="text"
+<div class="card text-start mx-auto mb-4" style="max-width: 35%;" id="card-{{ .ID }}">
+	<form class="card-body" hx-put="/buy_items/{{ .ID }}" hx-target="#card-{{ .ID }}" hx-swap="outerHTML">
+		[{{ .ID }}]
+		<div class="form-floating mb-3">
+			<input
+			id="name-{{ .ID }}"
+			class="form-control"
+			name="name"
+			type="text"
 			value="{{ .Name }}">
+			<label for="name-{{ .ID }}" > Name </label>
 		</div>
-		<div class="input-group mb-3">
-			<input class="form-control"
+		<div class="form-floating mb-3">
+			<input
+			id="current-quantity-{{ .ID }}"
+			class="form-control"
 			name="current_quantity"
 			type="number"
 			value="{{.CurrentQuantity}}">
+			<label for="current-quantity-{{ .ID }}"> Current quantity </label>
 		</div>
-		<div class="input-group mb-3">
-			<input name="min_quantity"
+		<div class="form-floating mb-3">
+			<input
+			id="min-quantity-{{ .ID }}"
+			class="form-control"
+			name="min_quantity"
+			type="number"
 			value="{{.MinQuantity}}">
+			<label for="min-quantity-{{ .ID }}" > Min Quantity </label>
 		</div>
-		Send E-mail
-		<input name="send_email"
-			type="checkbox"
-			{{ if .SendEmail }} checked {{ end }}>
-		<input type="submit" value="Submit">
+		<div class="position-relative mx-auto mb-1">
+			Send E-mail
+			<input name="send_email"
+				type="checkbox"
+				{{ if .SendEmail }} checked {{ end }}>
+		</div>
+		<input class="btn btn-primary" type="submit" value="Submit">
 	</form>
 </div>
 {{ end }}
