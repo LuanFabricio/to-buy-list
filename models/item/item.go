@@ -16,9 +16,14 @@ type BuyItem struct {
 	SendEmail bool `json:"send_email"`
 }
 
-func FindItems(db* sql.DB)  ([]BuyItem, error) {
+func FindItems(db* sql.DB, order_by_id bool)  ([]BuyItem, error) {
+	select_query := "SELECT id, name, current_quantity, min_quantity, send_email FROM items"
 
-	row, err := db.Query("SELECT id, name, current_quantity, min_quantity, send_email FROM items")
+	if order_by_id {
+		select_query += " ORDER BY id"
+	}
+
+	row, err := db.Query(select_query)
 	defer row.Close()
 
 	if err != nil {

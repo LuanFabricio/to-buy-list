@@ -16,7 +16,7 @@ var db *sql.DB = database.GetDbConnection()
 
 func GetBuyItems(c *gin.Context) {
 
-	buyItems, err := item.FindItems(db)
+	buyItems, err := item.FindItems(db, false)
 
 	if err != nil {
 	 	c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
