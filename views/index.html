@@ -18,25 +18,27 @@
 {{ end }}
 
 {{ block "form" . }}
-<form id="new-item-form" hx-swap="outerHTML" hx-post="/buy_items" id="create-form">
-	<span>
-		<label>Nome: </label>
-		<input name="name" id="name" type="text">
-	</span>
-	<span>
-		<label>Quantidade atual: </label>
-		<input name="current_quantity" id="current_quantity" type="number">
-	</span>
-	<span>
-		<label>Quantidade mínima: </label>
-		<input name="min_quantity" id="min_quantity" type="number">
-	</span>
-	<span>
-		<label>Enviar para o e-mail: </label>
-		<input name="send_email" id="send_email" type="checkbox">
-	</span>
-	<input type="submit" value="Submit">
-</form>
+<div id="new-item-form" class="card mx-auto mt-2" style="max-width: 18rem;">
+	<form class="card-body" hx-target="#new-item-form" hx-swap="outerHTML" hx-post="/buy_items" id="create-form">
+		<div class="form-floating mb-3">
+			<input class="form-control" name="name" id="name" type="text">
+			<label for="new-name">Nome: </label>
+		</div>
+		<div class="form-floating mb-3">
+			<input class="form-control" name="current_quantity" id="current_quantity" type="number">
+			<label for="current_quantity">Quantidade atual: </label>
+		</div>
+		<div class="form-floating mb-3">
+			<input class="form-control" name="min_quantity" id="min_quantity" type="number">
+			<label for="min_quantit">Quantidade mínima: </label>
+		</div>
+		<span>
+			<label>Enviar para o e-mail </label>
+			<input name="send_email" id="send_email" type="checkbox">
+		</span>
+		<input class="btn btn-primary" type="submit" value="Submit">
+	</form>
+</div>
 {{ end }}
 
 {{ block "items-list" . }}
