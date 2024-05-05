@@ -43,6 +43,8 @@
 
 {{ block "items-list" . }}
 <div id="buy-items-list">
-	{{ template "buy-items-list" . }}
+	{{ template "buy-items-list" .BuyItems }}
+	<hr>
+	{{ template "buy-items-list" .ToBuyItems }}
 </div>
 {{ end }}

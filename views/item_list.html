@@ -1,6 +1,6 @@
 {{ block "buy-items-list" . }}
 <div id="buy-item">
-	{{range .BuyItems }}
+	{{range . }}
 	{{ template "buy-item" . }}
 	{{end}}
 </div>
@@ -25,7 +25,7 @@
 			class="form-control"
 			name="current_quantity"
 			type="number"
-			value="{{.CurrentQuantity}}">
+			value="{{ .CurrentQuantity }}">
 			<label for="current-quantity-{{ .ID }}"> Current quantity </label>
 		</div>
 		<div class="form-floating mb-3">
