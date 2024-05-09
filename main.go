@@ -2,7 +2,7 @@ package main
 
 import (
 	"tbl-backend/controllers/buy_item"
-	"tbl-backend/controllers/index"
+	"tbl-backend/controllers/pages"
 	"tbl-backend/controllers/to_buy_list"
 	"tbl-backend/controllers/user"
 
@@ -18,8 +18,12 @@ func main() {
 	router.Use(cors.Default())
 	router.LoadHTMLGlob("views/*.html")
 
-	router.GET("/", index.GetIndex)
+	// HTML pages
+	router.GET("/", pages.GetIndex)
+	router.GET("/buy-items", pages.GetBuyItemsList)
+	router.GET("/to-buy-items", pages.GetToBuyItemsList)
 
+	// Endpoints
 	router.GET("/buy_items", buy_item.GetBuyItems)
 	router.GET("/buy_items/:id", buy_item.GetBuyItemById)
 	router.PUT("/buy_items/:id", buy_item.PutBuyItem)
