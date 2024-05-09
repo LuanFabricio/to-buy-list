@@ -1,3 +1,11 @@
+{{ block "to-buy-items-page" . }}
+<!doctype html>
+{{ template "style" . }}
+<body>
+	{{ template "to-buy-items-list" . }}
+</body>
+{{ end }}
+
 {{ block "to-buy-items-list" . }}
 <div id="buy-item">
 	{{range . }}
