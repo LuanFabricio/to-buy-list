@@ -1,4 +1,4 @@
-package index
+package pages
 
 import (
 	"database/sql"
@@ -30,4 +30,24 @@ func GetIndex(c *gin.Context) {
 	vwIndex := views.ViewIndex { BuyItems: buyItems, ToBuyItems: toBuyItems }
 
 	c.HTML(http.StatusOK, "index", vwIndex)
+}
+
+func GetBuyItemsList(c *gin.Context) {
+	buyItems, err := item.FindItems(db, true)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+		return
+	}
+
+	c.HTML(http.StatusOK, "buy-items-page", buyItems)
+}
+
+func GetToBuyItemsList(c *gin.Context) {
+	toBuyItems, err := to_buy_list.FetchToBuyList(db)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
+		return
+	}
+
+	c.HTML(http.StatusOK, "to-buy-items-page", toBuyItems)
 }
