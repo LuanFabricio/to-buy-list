@@ -1,0 +1,70 @@
+{{ block "to-buy-items-list" . }}
+<div id="buy-item">
+	{{range . }}
+	{{ template "to-buy-item" . }}
+	{{end}}
+</div>
+{{ end }}
+
+{{ block "to-buy-item" . }}
+<div class="card text-start mx-auto mb-4" style="max-width: 35%;" id="card-{{ .ID }}">
+	<form class="card-body">
+		[{{ .ID }}]
+		<div class="form-floating mb-3">
+			<input
+			id="name-{{ .ID }}"
+			class="form-control"
+			name="name"
+			type="text"
+			value="{{ .Name }}">
+			<label for="name-{{ .ID }}" > Name </label>
+		</div>
+		<div class="form-floating mb-3">
+			<input
+			id="current-quantity-{{ .ID }}"
+			class="form-control"
+			name="current_quantity"
+			type="number"
+			value="{{ .CurrentQuantity }}">
+			<label for="current-quantity-{{ .ID }}"> Current quantity </label>
+		</div>
+		<div class="form-floating mb-3">
+			<input
+			id="min-quantity-{{ .ID }}"
+			class="form-control"
+			name="min_quantity"
+			type="number"
+			value="{{.MinQuantity}}">
+			<label for="min-quantity-{{ .ID }}" > Min Quantity </label>
+		</div>
+		<div class="position-relative mx-auto mb-1">
+			Send E-mail
+			<input name="send_email"
+				type="checkbox"
+				{{ if .SendEmail }} checked {{ end }}>
+		</div>
+		<input
+			hx-put="/buy_items/{{ .ID }}"
+			hx-target="#card-{{ .ID }}"
+			hx-swap="outerHTML"
+			hx-trigger="click"
+			class="btn btn-primary"
+			type="submit"
+			value="Submit">
+		<input
+			hx-delete="/buy_items/{{ .ID }}"
+			hx-target="#card-{{ .ID }}"
+			hx-swap="outerHTML"
+			hx-trigger="click"
+			class="btn btn-danger"
+			type="submit"
+			value="Delete">
+	</form>
+</div>
+{{ end }}
+
+{{ block "oob-to-buy-item" . }}
+<div id="to-buy-item" hx-swap-oob="afterend">
+	{{ template "to-buy-item" . }}
+</div>
+{{ end }}

@@ -72,6 +72,10 @@ func PostBuyItem(c *gin.Context) {
 
 		c.HTML(http.StatusOK, "form", nil)
 		c.HTML(http.StatusOK, "oob-buy-item", buyItem)
+
+		if buyItem.CurrentQuantity < buyItem.MinQuantity {
+			c.HTML(http.StatusOK, "oob-to-buy-item", buyItem)
+		}
 		// c.HTML(http.StatusOK, "oob-to-buy-item", buyItem)
 		return
 	}
