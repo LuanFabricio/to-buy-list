@@ -1,15 +1,23 @@
 package email
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"net/smtp"
 	"os"
+	"strings"
 )
 
 const STMP_GMAIL string = "smtp.gmail.com"
+const MIME string = "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
 
 func SendEmail(to []string, subject string, msg string) error{
+	if len(to) <= 0 {
+		return errors.New("Empty list of addressee email")
+	}
+
 	email, found := os.LookupEnv("TBL_EMAIL")
 	if !found {
 		return errors.New("E-Mail address not found on env vars")
@@ -22,17 +30,46 @@ func SendEmail(to []string, subject string, msg string) error{
 
 	auth := smtp.PlainAuth("", email, password, STMP_GMAIL)
 
-	msg_bytes := []byte(
-		fmt.Sprintf("To: %v\r\n", to) +
-		fmt.Sprintf("Subject: %v\r\n", subject) +
-		msg,
-	)
+	msg_bytes := getMsgBytes(to, subject, msg)
+
+	log.Printf("Sending an email to: %s\n", strings.Join(to, ","))
+	log.Println(string(msg_bytes))
 
 	err := smtp.SendMail(STMP_GMAIL + ":587", auth, email, to, msg_bytes)
 
 	if err != nil {
+		log.Fatal(err)
 		return err
 	}
 
 	return nil
+}
+
+func getMsgBytes(to []string, subject, msg string) []byte {
+	msg_bytes := []byte(
+		fmt.Sprintf("To: %v\r\n", strings.Join(to, ",")) +
+		fmt.Sprintf("Subject: %v\r\n", subject) +
+		MIME +
+		msg,
+	)
+	return msg_bytes
+}
+
+func FetchUsersEmail(db *sql.DB/*, buyListId int*/) ([]string, error) {
+	const QUERY string = "SELECT email FROM users"
+
+	emailsRow, err := db.Query(QUERY)
+	if err != nil {
+		return nil, err
+	}
+	defer emailsRow.Close()
+
+	emails := []string{}
+	var email string
+	for emailsRow.Next() {
+		emailsRow.Scan(&email)
+		emails = append(emails, email)
+	}
+
+	return emails, nil
 }
