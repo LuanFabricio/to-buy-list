@@ -72,8 +72,8 @@ func (bi* BuyItem) Insert(db* sql.DB) (*BuyItem, error) {
 	)
 
 	err := db.QueryRow(
-		`INSERT INTO items (name, current_quantity, min_quantity, send_email)
-		VALUES($1, $2, $3, $4)
+		`INSERT INTO items (name, current_quantity, min_quantity, send_email, buy_list_id)
+		VALUES($1, $2, $3, $4, 1)
 		RETURNING id, name, current_quantity, min_quantity, send_email`,
 		bi.Name, bi.CurrentQuantity, bi.MinQuantity, bi.SendEmail,
 	).Scan(&id, &name, &current_quantity, &min_quantity, &send_email)

@@ -25,7 +25,7 @@ func main() {
 	err = to_buy_list.SendToBuyListEmail(database.GetDbConnection())
 
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("[WARNING]: %v\n", err)
 	}
 
 	scheduler, err := gocron.NewScheduler()

@@ -1,6 +1,5 @@
-CREATE TABLE IF NOT EXISTS items (
+CREATE TABLE IF NOT EXISTS users (
 	id SERIAL PRIMARY KEY,
-	name VARCHAR(255),
-	current_quantity INTEGER CHECK(current_quantity >= 0),
-	min_quantity INTEGER CHECK(min_quantity >= 0),
-	send_email BOOLEAN)
+	username VARCHAR(32),
+	password VARCHAR(255),
+	email VARCHAR(128))
