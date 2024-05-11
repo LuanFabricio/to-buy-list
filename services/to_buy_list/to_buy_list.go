@@ -2,6 +2,7 @@ package to_buy_list
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"tbl-backend/models/item"
@@ -13,6 +14,9 @@ func SendToBuyListEmail(db *sql.DB) error {
 
 	if err != nil {
 		return err
+	}
+	if len(to_buy_list) <= 0 {
+		return errors.New("Empty to buy list")
 	}
 
 	emailContent := `
@@ -49,7 +53,10 @@ func SendToBuyListEmail(db *sql.DB) error {
 }
 
 func FetchToBuyList(db *sql.DB) ([]item.BuyItem, error) {
-	buy_list_row, err := db.Query("SELECT * FROM items")
+	buy_list_row, err := db.Query(`
+	SELECT
+	id, name, current_quantity, min_quantity, send_email
+	FROM items`)
 
 	if err != nil {
 		return nil, err
