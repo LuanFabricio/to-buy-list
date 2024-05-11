@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
@@ -17,45 +19,53 @@ type migration struct {
 
 var db *sql.DB = nil;
 func GetDbConnection() *sql.DB {
-	if db == nil {
-		db = InitDbConnection()
+	if db != nil {
+		return db
 	}
+
+	db = initDbConnection()
 	return db
 }
 
-func InitDbConnection() *sql.DB {
-	psql_conenction, found := os.LookupEnv("TBL_PSQL_CONNECTION")
+func initDbConnection() *sql.DB {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+
+	psql_connection, found := os.LookupEnv("TBL_PSQL_CONNECTION")
 
 	if !found {
-		log.Println("Could not find \"TBL_PSQL_CONNECTION\" variable")
+		log.Fatal("Could not find \"TBL_PSQL_CONNECTION\" variable")
 		return nil;
 	}
 
-	db, err := sql.Open("postgres", psql_conenction)
+	db, err := sql.Open("postgres", psql_connection)
 	if err != nil {
-		log.Println("Could not open PostgreSQL connection: ", err)
+		log.Fatal("Could not open PostgreSQL connection: ", err)
 		return nil;
 	}
 
 	tx, err := db.Begin()
 	if err != nil {
-		log.Println("Error on starting transaction: ", err)
+		log.Fatal("Error on starting transaction: ", err)
 		return nil
 	}
 
 	err = migrateDb(tx)
 	if err != nil {
-		log.Println("Error during migration")
+		log.Fatal("Error during migration")
 		err = tx.Rollback()
 
 		if err != nil {
-			log.Println("Error rolling back the migration: ", err)
+			log.Fatal("Error rolling back the migration: ", err)
 		}
 		return nil
 	}
 	err = tx.Commit()
 	if err != nil {
-		log.Println("Error during commiting transtaction: ", err)
+		log.Fatal("Error during commiting transtaction: ", err)
 		return nil
 	}
 
@@ -106,7 +116,7 @@ func migrateDb(tx *sql.Tx) error {
 		_, err = tx.Exec(m.query)
 
 		if err != nil {
-			log.Println("Error!")
+			log.Fatal("Error!")
 			return err
 		}
 	}
