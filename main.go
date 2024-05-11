@@ -5,12 +5,19 @@ import (
 	"tbl-backend/controllers/pages"
 	"tbl-backend/controllers/to_buy_list"
 	"tbl-backend/controllers/user"
-
+	"log"
+	"github.com/joho/godotenv"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
 	router := gin.Default()
 
 	router.Static("/static", "./views/static/")
