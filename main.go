@@ -22,11 +22,7 @@ func main() {
 		return
 	}
 
-	err = to_buy_list.SendToBuyListEmail(database.GetDbConnection(), 1)
-
-	if err != nil {
-		log.Printf("[WARNING]: %v\n", err)
-	}
+	to_buy_list.SendToBuyListToEveryone(database.GetDbConnection())
 
 	scheduler, err := gocron.NewScheduler()
 	if err != nil {
