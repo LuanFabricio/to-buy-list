@@ -11,8 +11,8 @@ import (
 
 func SendToBuyListToEveryone(db *sql.DB) {
 	BUY_LISTS_QUERY := "SELECT id FROM buy_list"
-	buy_list_row, err := db.Query(BUY_LISTS_QUERY)
-	defer buy_list_row.Close()
+	buyListRow, err := db.Query(BUY_LISTS_QUERY)
+	defer buyListRow.Close()
 
 	if err != nil {
 		log.Fatal(err)
@@ -20,8 +20,8 @@ func SendToBuyListToEveryone(db *sql.DB) {
 	}
 
 	var buyListId int
-	for buy_list_row.Next() {
-		err = buy_list_row.Scan(&buyListId)
+	for buyListRow.Next() {
+		err = buyListRow.Scan(&buyListId)
 		if err != nil {
 			log.Printf("[ERROR] %v", err)
 		} else {
@@ -35,12 +35,12 @@ func SendToBuyListToEveryone(db *sql.DB) {
 }
 
 func SendToBuyListEmail(db *sql.DB, buyListId int) error {
-	to_buy_list, err := FetchToBuyList(db, buyListId)
+	toBuyList, err := FetchToBuyList(db, buyListId)
 
 	if err != nil {
 		return err
 	}
-	if len(to_buy_list) <= 0 {
+	if len(toBuyList) <= 0 {
 		return errors.New("Empty to buy list")
 	}
 
@@ -48,13 +48,13 @@ func SendToBuyListEmail(db *sql.DB, buyListId int) error {
 	<h1>To Buy items</h1>
 	<ol>
 	`
-	for _, to_buy_item := range to_buy_list {
-		delta := int32(to_buy_item.CurrentQuantity) - int32(to_buy_item.MinQuantity)
+	for _, toBuyItem := range toBuyList {
+		delta := int32(toBuyItem.CurrentQuantity) - int32(toBuyItem.MinQuantity)
 		emailContent += fmt.Sprintf(
 			"<li>%s: %d/%d(%d)</li>",
-			to_buy_item.Name,
-			to_buy_item.CurrentQuantity,
-			to_buy_item.MinQuantity,
+			toBuyItem.Name,
+			toBuyItem.CurrentQuantity,
+			toBuyItem.MinQuantity,
 			delta,
 		)
 	}
