@@ -22,7 +22,7 @@ func main() {
 		return
 	}
 
-	err = to_buy_list.SendToBuyListEmail(database.GetDbConnection())
+	err = to_buy_list.SendToBuyListEmail(database.GetDbConnection(), 1)
 
 	if err != nil {
 		log.Printf("[WARNING]: %v\n", err)
@@ -45,6 +45,7 @@ func main() {
 		gocron.NewTask(
 			to_buy_list.SendToBuyListEmail,
 			database.GetDbConnection(),
+			1,
 		),
 	)
 	if err != nil {

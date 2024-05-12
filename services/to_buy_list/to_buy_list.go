@@ -9,8 +9,8 @@ import (
 	"tbl-backend/services/email"
 )
 
-func SendToBuyListEmail(db *sql.DB) error {
-	to_buy_list, err := FetchToBuyList(db)
+func SendToBuyListEmail(db *sql.DB, buy_list_id int) error {
+	to_buy_list, err := FetchToBuyList(db, buy_list_id)
 
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func SendToBuyListEmail(db *sql.DB) error {
 
 	log.Println(emailContent)
 
-	to, err := email.FetchUsersEmail(db)
+	to, err := email.FetchUsersEmail(db, buy_list_id)
 
 	if err != nil {
 		return err
@@ -52,11 +52,15 @@ func SendToBuyListEmail(db *sql.DB) error {
 	)
 }
 
-func FetchToBuyList(db *sql.DB) ([]item.BuyItem, error) {
+func FetchToBuyList(db *sql.DB, buy_list_id int) ([]item.BuyItem, error) {
 	buy_list_row, err := db.Query(`
 	SELECT
 	id, name, current_quantity, min_quantity, send_email
-	FROM items`)
+	FROM items
+	WHERE buy_list_id = $1
+	AND current_quantity >= min_quantity`,
+	buy_list_id)
+	defer buy_list_row.Close()
 
 	if err != nil {
 		return nil, err
@@ -64,11 +68,9 @@ func FetchToBuyList(db *sql.DB) ([]item.BuyItem, error) {
 
 	var buy_list []item.BuyItem = []item.BuyItem{}
 	var buy_item item.BuyItem
-	for buy_list_row.Next(){
+	for buy_list_row.Next() {
 		buy_list_row.Scan(&buy_item.ID, &buy_item.Name, &buy_item.CurrentQuantity, &buy_item.MinQuantity, &buy_item.SendEmail)
-		if buy_item.CurrentQuantity <= buy_item.MinQuantity {
-			buy_list = append(buy_list, buy_item)
-		}
+		buy_list = append(buy_list, buy_item)
 	}
 
 	return buy_list, nil

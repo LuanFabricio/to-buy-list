@@ -21,7 +21,7 @@ func GetIndex(c *gin.Context) {
 		return
 	}
 
-	toBuyItems, err := to_buy_list.FetchToBuyList(db)
+	toBuyItems, err := to_buy_list.FetchToBuyList(db, 1)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
 		return
@@ -43,7 +43,7 @@ func GetBuyItemsList(c *gin.Context) {
 }
 
 func GetToBuyItemsList(c *gin.Context) {
-	toBuyItems, err := to_buy_list.FetchToBuyList(db)
+	toBuyItems, err := to_buy_list.FetchToBuyList(db, 1)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
 		return

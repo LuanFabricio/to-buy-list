@@ -116,7 +116,7 @@ func migrateDb(tx *sql.Tx) error {
 		_, err = tx.Exec(m.query)
 
 		if err != nil {
-			log.Fatal("Error!")
+			log.Fatal(err)
 			return err
 		}
 	}
