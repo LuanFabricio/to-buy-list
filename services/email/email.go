@@ -56,9 +56,9 @@ func getMsgBytes(to []string, subject, msg string) []byte {
 }
 
 func FetchUsersEmail(db *sql.DB, buyListId int) ([]string, error) {
-	const USERS_EMAIL_QUERY = "SELECT u.email FROM buy_list_access bla JOIN users u ON u.id = bla.user_id"
+	const USERS_EMAIL_QUERY = "SELECT u.email FROM buy_list_access bla JOIN users u ON u.id = bla.user_id WHERE  bla.buy_list_id = $1"
 
-	emailsRow, err := db.Query(USERS_EMAIL_QUERY)
+	emailsRow, err := db.Query(USERS_EMAIL_QUERY, buyListId)
 	if err != nil {
 		return nil, err
 	}
