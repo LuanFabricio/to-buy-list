@@ -9,8 +9,33 @@ import (
 	"tbl-backend/services/email"
 )
 
-func SendToBuyListEmail(db *sql.DB, buy_list_id int) error {
-	to_buy_list, err := FetchToBuyList(db, buy_list_id)
+func SendToBuyListToEveryone(db *sql.DB) {
+	BUY_LISTS_QUERY := "SELECT id FROM buy_list"
+	buy_list_row, err := db.Query(BUY_LISTS_QUERY)
+	defer buy_list_row.Close()
+
+	if err != nil {
+		log.Fatal(err)
+		return;
+	}
+
+	var buyListId int
+	for buy_list_row.Next() {
+		err = buy_list_row.Scan(&buyListId)
+		if err != nil {
+			log.Printf("[ERROR] %v", err)
+		} else {
+			log.Printf("[INFO] Sending to buy list id %v", buyListId)
+			err = SendToBuyListEmail(db, buyListId)
+			if err != nil {
+				log.Printf("[ERROR] %v", err)
+			}
+		}
+	}
+}
+
+func SendToBuyListEmail(db *sql.DB, buyListId int) error {
+	to_buy_list, err := FetchToBuyList(db, buyListId)
 
 	if err != nil {
 		return err
@@ -23,7 +48,7 @@ func SendToBuyListEmail(db *sql.DB, buy_list_id int) error {
 	<h1>To Buy items</h1>
 	<ol>
 	`
-	for i, to_buy_item := range to_buy_list {
+	for _, to_buy_item := range to_buy_list {
 		delta := int32(to_buy_item.CurrentQuantity) - int32(to_buy_item.MinQuantity)
 		emailContent += fmt.Sprintf(
 			"<li>%s: %d/%d(%d)</li>",
@@ -32,15 +57,11 @@ func SendToBuyListEmail(db *sql.DB, buy_list_id int) error {
 			to_buy_item.MinQuantity,
 			delta,
 		)
-
-		if i+1 < len(to_buy_list) { emailContent += "\r\n" }
 	}
 	emailContent += "</ol>"
-
 	log.Println(emailContent)
 
-	to, err := email.FetchUsersEmail(db, buy_list_id)
-
+	to, err := email.FetchUsersEmail(db, buyListId)
 	if err != nil {
 		return err
 	}
@@ -48,18 +69,18 @@ func SendToBuyListEmail(db *sql.DB, buy_list_id int) error {
 	return email.SendEmail(
 		to,
 		"To Buy List",
-		emailContent+"IDK",
+		emailContent,
 	)
 }
 
-func FetchToBuyList(db *sql.DB, buy_list_id int) ([]item.BuyItem, error) {
+func FetchToBuyList(db *sql.DB, buyListId int) ([]item.BuyItem, error) {
 	buy_list_row, err := db.Query(`
 	SELECT
 	id, name, current_quantity, min_quantity, send_email
 	FROM items
 	WHERE buy_list_id = $1
-	AND current_quantity >= min_quantity`,
-	buy_list_id)
+	AND current_quantity <= min_quantity`,
+	buyListId)
 	defer buy_list_row.Close()
 
 	if err != nil {
