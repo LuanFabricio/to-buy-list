@@ -19,18 +19,22 @@ func SendToBuyListToEveryone(db *sql.DB) {
 		return;
 	}
 
-	var buyListId int
 	for buyListRow.Next() {
+		var buyListId int
 		err = buyListRow.Scan(&buyListId)
 		if err != nil {
 			log.Printf("[ERROR] %v", err)
 		} else {
-			log.Printf("[INFO] Sending to buy list id %v", buyListId)
-			err = SendToBuyListEmail(db, buyListId)
-			if err != nil {
-				log.Printf("[ERROR] %v", err)
-			}
+			go sendEmailGoroutine(db, buyListId)
 		}
+	}
+}
+
+func sendEmailGoroutine(db *sql.DB, buyListId int) {
+	log.Printf("[INFO] Sending to buy list id %v", buyListId)
+	err := SendToBuyListEmail(db, buyListId)
+	if err != nil {
+		log.Printf("[ERROR] %v", err)
 	}
 }
 
