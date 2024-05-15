@@ -51,3 +51,7 @@ func GetToBuyItemsList(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "to-buy-items-page", toBuyItems)
 }
+
+func GetLogin(c *gin.Context) {
+	c.HTML(http.StatusOK, "login", nil)
+}

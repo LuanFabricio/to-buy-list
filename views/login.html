@@ -1,0 +1,18 @@
+{{ block "login" . }}
+{{ template "style" . }}
+<body>
+	<div id="login-form" class="card mx-auto mt-2" style="max-width: 18rem;">
+		<form class="card-body" hx-target="#login-form" hx-swap="outerHTML" hx-post="/auth" id="login-form">
+			<div class="form-floating mb-3">
+				<input class="form-control" name="username" id="login" type="text">
+				<label>Login: </label>
+			</div>
+			<div class="form-floating mb-3">
+				<input class="form-control" name="password" id="password" type="password">
+				<label>Password: </label>
+			</div>
+			<input class="btn btn-primary" type="submit" value="Submit">
+		</form>
+	</div>
+</body>
+{{ end }}
