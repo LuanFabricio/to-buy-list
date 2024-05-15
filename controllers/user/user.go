@@ -2,6 +2,7 @@ package user
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 	"tbl-backend/database"
 	"tbl-backend/models/user"
@@ -38,4 +39,32 @@ func PostUser(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusCreated, *user)
+}
+
+// TODO(Luan): Move struct to models or refactor UserDTO
+type Login struct {
+	Username string `form:"username" json:"username" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+}
+
+func AuthUser(c *gin.Context) {
+	var login Login
+
+	if err := c.ShouldBind(&login); err != nil {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+
+
+	log.Printf("Login: %v\n", login)
+	// TODO(Luan): Check user credentials
+	if len(login.Username) == len(login.Password) {
+		c.Header("HX-Redirect", "/")
+		// TODO(Luan): Create auth token
+		c.Header("Set-Cookie", "token=cookie123")
+		c.Status(http.StatusOK)
+		return
+	}
+
+	c.Status(http.StatusUnauthorized)
 }
