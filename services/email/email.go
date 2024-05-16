@@ -18,6 +18,11 @@ func SendEmail(to []string, subject string, msg string) error{
 		return errors.New("Empty list of addressee email")
 	}
 
+	emailName, found := os.LookupEnv("TBL_EMAIL_NAME")
+	if !found {
+		return errors.New("E-Mail name not found on env vars")
+	}
+
 	email, found := os.LookupEnv("TBL_EMAIL")
 	if !found {
 		return errors.New("E-Mail address not found on env vars")
@@ -30,7 +35,7 @@ func SendEmail(to []string, subject string, msg string) error{
 
 	auth := smtp.PlainAuth("", email, password, STMP_GMAIL)
 
-	msg_bytes := getMsgBytes(to, subject, msg)
+	msg_bytes := getMsgBytes(fmt.Sprintf("%s <%s>", emailName, email), to, subject, msg)
 
 	log.Printf("Sending an email to: %s\n", strings.Join(to, ","))
 	log.Println(string(msg_bytes))
@@ -45,8 +50,9 @@ func SendEmail(to []string, subject string, msg string) error{
 	return nil
 }
 
-func getMsgBytes(to []string, subject, msg string) []byte {
+func getMsgBytes(from string, to []string, subject, msg string) []byte {
 	msg_bytes := []byte(
+		fmt.Sprintf("From: %s\r\n", from) +
 		fmt.Sprintf("To: %v\r\n", strings.Join(to, ",")) +
 		fmt.Sprintf("Subject: %v\r\n", subject) +
 		MIME +
