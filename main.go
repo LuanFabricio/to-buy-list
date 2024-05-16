@@ -22,7 +22,7 @@ func main() {
 		return
 	}
 
-	// to_buy_list.SendToBuyListToEveryone(database.GetDbConnection())
+	to_buy_list.SendToBuyListToEveryone(database.GetDbConnection())
 
 	scheduler, err := gocron.NewScheduler()
 	if err != nil {
