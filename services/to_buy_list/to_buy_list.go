@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	buylist "tbl-backend/models/buy_list"
 	"tbl-backend/models/item"
 	"tbl-backend/services/email"
 )
@@ -70,9 +71,14 @@ func SendToBuyListEmail(db *sql.DB, buyListId int) error {
 		return err
 	}
 
+	var buyList buylist.BuyList
+	if err = buyList.FetchByID(db, buyListId); err != nil {
+		return err
+	}
+
 	return email.SendEmail(
 		to,
-		"To Buy List",
+		"To Buy List - " + buyList.Name,
 		emailContent,
 	)
 }
