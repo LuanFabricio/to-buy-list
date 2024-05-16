@@ -8,7 +8,8 @@ import (
 	"tbl-backend/models/user"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
+	"crypto/sha256"
+	"encoding/hex"
 )
 
 var db *sql.DB = database.GetDbConnection()
@@ -21,12 +22,7 @@ func PostUser(c *gin.Context) {
 	}
 
 	if !newUser.Hash {
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), 8)
-
-		if err != nil {
-			c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
-			return
-		}
+		hashedPassword := generateUserHash(newUser.Username, newUser.Password)
 
 		newUser.Password = string(hashedPassword)
 	}
@@ -55,10 +51,20 @@ func AuthUser(c *gin.Context) {
 		return
 	}
 
+	currentHashBytes := generateUserHash(login.Username, login.Password)
 
-	log.Printf("Login: %v\n", login)
-	// TODO(Luan): Check user credentials
-	if len(login.Username) == len(login.Password) {
+	userHash, err := fetchUserHash(login.Username)
+	if err != nil {
+		log.Printf("[ERROR] %v\n", err)
+		c.Status(http.StatusNotFound)
+		return
+	}
+	log.Printf("Current: %s : %s (%s)", login.Username, login.Password, login.Username + login.Password)
+
+	log.Printf("User hash: %s", userHash)
+	currentHash := string(currentHashBytes)
+	log.Printf("Current hash: %s", currentHash)
+	if userHash == currentHash {
 		c.Header("HX-Redirect", "/")
 		// TODO(Luan): Create auth token
 		c.Header("Set-Cookie", "token=cookie123")
@@ -67,4 +73,22 @@ func AuthUser(c *gin.Context) {
 	}
 
 	c.Status(http.StatusUnauthorized)
+}
+
+func fetchUserHash(username string) (string, error) {
+	var user user.User
+
+	if err := user.FindByEmail(db, username); err != nil {
+		return "", err
+	}
+
+	return user.Password, nil
+}
+
+func generateUserHash(email, password string) string {
+	originalString := email + password
+
+	sha := sha256.New()
+	sha.Write([]byte(originalString))
+	return hex.EncodeToString(sha.Sum(nil))
 }
