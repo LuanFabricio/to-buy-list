@@ -16,12 +16,12 @@ type UserDTO struct {
 	Hash bool `json:"hash"`
 }
 
-func (u* UserDTO) Insert(db* sql.DB) (*User, error) {
+func (ud* UserDTO) Insert(db* sql.DB) (*User, error) {
 	var user User
 	var err = db.QueryRow(
 		`INSERT INTO users (username, password) VALUES($1, $2)
 		RETURNING id, username, password`,
-		u.Username, u.Password,
+		ud.Username, ud.Password,
 	).Scan(&user.ID, &user.Username, &user.Password)
 
 	if err != nil {
@@ -29,4 +29,18 @@ func (u* UserDTO) Insert(db* sql.DB) (*User, error) {
 	}
 
 	return &user, nil
+}
+
+func (u* User) FindByEmail(db* sql.DB, email string) (error) {
+	err := db.QueryRow(
+		`SELECT username, password FROM users
+		WHERE username = $1`,
+		email,
+	).Scan(&u.Username, &u.Password)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
