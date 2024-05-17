@@ -2,14 +2,17 @@ package user
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"tbl-backend/database"
 	"tbl-backend/models/user"
+	"tbl-backend/services/token"
 
-	"github.com/gin-gonic/gin"
 	"crypto/sha256"
 	"encoding/hex"
+
+	"github.com/gin-gonic/gin"
 )
 
 var db *sql.DB = database.GetDbConnection()
@@ -67,7 +70,12 @@ func AuthUser(c *gin.Context) {
 	if userHash == currentHash {
 		c.Header("HX-Redirect", "/")
 		// TODO(Luan): Create auth token
-		c.Header("Set-Cookie", "token=cookie123")
+		authToken, err := token.GenerateToken(login.Username)
+		if err != nil {
+			c.AbortWithStatus(http.StatusInternalServerError)
+		}
+
+		c.Header("Set-Cookie", fmt.Sprintf("token=%s", authToken))
 		c.Status(http.StatusOK)
 		return
 	}
