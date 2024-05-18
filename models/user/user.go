@@ -33,10 +33,10 @@ func (ud* UserDTO) Insert(db* sql.DB) (*User, error) {
 
 func (u* User) FindByEmail(db* sql.DB, email string) (error) {
 	err := db.QueryRow(
-		`SELECT username, password FROM users
+		`SELECT id, username, password FROM users
 		WHERE username = $1`,
 		email,
-	).Scan(&u.Username, &u.Password)
+	).Scan(&u.ID, &u.Username, &u.Password)
 
 	if err != nil {
 		return err
