@@ -2,6 +2,7 @@ package pages
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -10,6 +11,7 @@ import (
 	"tbl-backend/models/item"
 	"tbl-backend/models/views"
 	"tbl-backend/services/to_buy_list"
+	"tbl-backend/services/token"
 )
 
 var db *sql.DB = database.GetDbConnection()
@@ -54,4 +56,26 @@ func GetToBuyItemsList(c *gin.Context) {
 
 func GetLogin(c *gin.Context) {
 	c.HTML(http.StatusOK, "login", nil)
+}
+
+func GetBuyList(c *gin.Context) {
+	log.Printf("[INFO]: %v\n", c.Request.Header)
+	log.Printf("[INFO]: OK!\n")
+
+	cookie, err := c.Cookie("token")
+
+	if err != nil {
+		c.Status(http.StatusUnauthorized)
+	}
+
+	log.Printf("[INFO]: %s\n", cookie)
+	userId, err := token.ExtractTokenId(cookie)
+
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+
+	log.Printf("[INFO]: User ID: %s\n", userId)
+	c.Status(http.StatusOK)
 }
