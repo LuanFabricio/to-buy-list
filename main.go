@@ -22,7 +22,7 @@ func main() {
 		return
 	}
 
-	to_buy_list.SendToBuyListToEveryone(database.GetDbConnection())
+	// to_buy_list.SendToBuyListToEveryone(database.GetDbConnection())
 
 	scheduler, err := gocron.NewScheduler()
 	if err != nil {
@@ -39,9 +39,8 @@ func main() {
 			),
 		),
 		gocron.NewTask(
-			to_buy_list.SendToBuyListEmail,
+			to_buy_list.SendToBuyListToEveryone,
 			database.GetDbConnection(),
-			1,
 		),
 	)
 	if err != nil {
@@ -64,6 +63,7 @@ func main() {
 	router.GET("/buy-items", pages.GetBuyItemsList)
 	router.GET("/to-buy-items", pages.GetToBuyItemsList)
 	router.GET("/login", pages.GetLogin)
+	router.GET("/buy-list", pages.GetBuyList)
 
 	// Endpoints
 	router.GET("/buy_items", buy_item.GetBuyItems)
