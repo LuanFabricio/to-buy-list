@@ -56,7 +56,7 @@ func AuthUser(c *gin.Context) {
 
 	currentHashBytes := generateUserHash(login.Username, login.Password)
 
-	userHash, err := fetchUserHash(login.Username)
+	user, err := fetchUser(login.Username)
 	if err != nil {
 		log.Printf("[ERROR] %v\n", err)
 		c.Status(http.StatusNotFound)
@@ -64,13 +64,13 @@ func AuthUser(c *gin.Context) {
 	}
 	log.Printf("Current: %s : %s (%s)", login.Username, login.Password, login.Username + login.Password)
 
-	log.Printf("User hash: %s", userHash)
+	log.Printf("User hash: %s", user.Password)
 	currentHash := string(currentHashBytes)
 	log.Printf("Current hash: %s", currentHash)
-	if userHash == currentHash {
+	if user.Password == currentHash {
 		c.Header("HX-Redirect", "/")
-		// TODO(Luan): Create auth token
-		authToken, err := token.GenerateToken(login.Username)
+		log.Printf("[INFO]: userID=%s", user.ID)
+		authToken, err := token.GenerateToken(user.ID)
 		if err != nil {
 			c.AbortWithStatus(http.StatusInternalServerError)
 		}
@@ -83,14 +83,14 @@ func AuthUser(c *gin.Context) {
 	c.Status(http.StatusUnauthorized)
 }
 
-func fetchUserHash(username string) (string, error) {
+func fetchUser(username string) (user.User, error) {
 	var user user.User
 
 	if err := user.FindByEmail(db, username); err != nil {
-		return "", err
+		return user, err
 	}
 
-	return user.Password, nil
+	return user, nil
 }
 
 func generateUserHash(email, password string) string {
