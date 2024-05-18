@@ -33,7 +33,7 @@ func (ud* UserDTO) Insert(db* sql.DB) (*User, error) {
 	return &user, nil
 }
 
-func FetchUser(db* sql.DB, id string) (User, error){
+func FetchUserById(db* sql.DB, id string) (User, error){
 	var u User
 	err := db.QueryRow(
 		`SELECT id, username, password FROM users
@@ -58,7 +58,7 @@ func (u* User) FindByEmail(db* sql.DB, email string) (error) {
 	return nil
 }
 
-func (u* User) FetchByLists(db* sql.DB) []buylist.BuyList {
+func (u* User) FetchBuyLists(db* sql.DB) []buylist.BuyList {
 	buyListArr := make([]buylist.BuyList, 0)
 
 	rows, err := db.Query(

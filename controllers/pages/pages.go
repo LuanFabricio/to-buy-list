@@ -9,6 +9,7 @@ import (
 
 	"tbl-backend/database"
 	"tbl-backend/models/item"
+	"tbl-backend/models/user"
 	"tbl-backend/models/views"
 	"tbl-backend/services/to_buy_list"
 	"tbl-backend/services/token"
@@ -63,19 +64,24 @@ func GetBuyList(c *gin.Context) {
 	log.Printf("[INFO]: OK!\n")
 
 	cookie, err := c.Cookie("token")
-
 	if err != nil {
 		c.Status(http.StatusUnauthorized)
 	}
 
 	log.Printf("[INFO]: %s\n", cookie)
 	userId, err := token.ExtractTokenId(cookie)
-
 	if err != nil {
 		c.AbortWithError(http.StatusUnauthorized, err)
 		return
 	}
 
-	log.Printf("[INFO]: User ID: %s\n", userId)
+	user, err := user.FetchUserById(db, userId)
+	if err != nil {
+		c.AbortWithError(http.StatusNotFound, err)
+		return
+	}
+	buyListArr := user.FetchBuyLists(db)
+
+	log.Printf("%v\n", buyListArr)
 	c.Status(http.StatusOK)
 }
