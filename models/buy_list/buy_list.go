@@ -53,3 +53,19 @@ func (bl* BuyList) FetchItems(db* sql.DB) ([]item.BuyItem, error){
 
 	return buyItemArr, nil
 }
+
+func (bl* BuyList) UserHaveAccess(db* sql.DB, userId string) (bool, error) {
+	var rowCount int
+	err := db.QueryRow(
+		`SELECT COUNT(*) FROM buy_list_access
+		WHERE buy_list_id = $1
+			AND user_id = $2`,
+		bl.ID,
+		userId,
+	).Scan(&rowCount)
+	if err != nil {
+		return false, err
+	}
+
+	return rowCount >= 1, nil
+}
