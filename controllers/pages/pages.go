@@ -4,10 +4,12 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
 	"tbl-backend/database"
+	buylist "tbl-backend/models/buy_list"
 	"tbl-backend/models/item"
 	"tbl-backend/models/user"
 	"tbl-backend/models/views"
@@ -83,5 +85,22 @@ func GetBuyList(c *gin.Context) {
 	buyListArr := user.FetchBuyLists(db)
 
 	log.Printf("%v\n", buyListArr)
-	c.Status(http.StatusOK)
+	c.HTML(http.StatusOK, "buy_list", buyListArr)
+}
+
+func GetBuyListById(c *gin.Context) {
+	id := c.Param("id")
+	buyListId, _ := strconv.ParseInt(id, 10, 32)
+
+	buyList := buylist.BuyList{ ID: int(buyListId) }
+
+	buyItemsArr, err := buyList.FetchItems(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(buyList.ID)
+	log.Println(buyItemsArr)
+
+	c.HTML(http.StatusOK, "buy-items-page", buyItemsArr)
 }
