@@ -92,7 +92,29 @@ func GetBuyListById(c *gin.Context) {
 	id := c.Param("id")
 	buyListId, _ := strconv.ParseInt(id, 10, 32)
 
+	userToken, err := c.Cookie("token")
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
+
+	userID, err := token.ExtractTokenId(userToken)
+	if err != nil {
+		c.AbortWithError(http.StatusUnauthorized, err)
+		return
+	}
 	buyList := buylist.BuyList{ ID: int(buyListId) }
+
+	haveAccess, err := buyList.UserHaveAccess(db, userID)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	if !haveAccess {
+		c.HTML(http.StatusUnauthorized, "redirect", gin.H { "PathName": "/buy-list" })
+		return
+	}
 
 	buyItemsArr, err := buyList.FetchItems(db)
 	if err != nil {
