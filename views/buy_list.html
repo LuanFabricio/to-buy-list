@@ -2,6 +2,8 @@
 <!doctype html>
 {{ template "style" . }}
 <body>
-
+	{{ range . }}
+	<a href="/buy-list/{{ .ID }}"> {{ .Name }}</a>
+	{{ end }}
 </body>
 {{ end }}
