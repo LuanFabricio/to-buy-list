@@ -1,0 +1,7 @@
+{{ block "redirect". }}
+<script>
+	console.l
+	const redirect = window.location.origin + {{ .PathName }};
+	window.location.replace(redirect);
+</script>
+{{ end }}
