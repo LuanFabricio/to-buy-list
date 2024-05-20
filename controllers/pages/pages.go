@@ -62,18 +62,16 @@ func GetLogin(c *gin.Context) {
 }
 
 func GetBuyList(c *gin.Context) {
-	log.Printf("[INFO]: %v\n", c.Request.Header)
-	log.Printf("[INFO]: OK!\n")
-
 	cookie, err := c.Cookie("token")
 	if err != nil {
-		c.Status(http.StatusUnauthorized)
+		c.HTML(http.StatusUnauthorized, "redirect", gin.H { "PathName": "/login" })
+		return
 	}
 
 	log.Printf("[INFO]: %s\n", cookie)
 	userId, err := token.ExtractTokenId(cookie)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		c.HTML(http.StatusUnauthorized, "redirect", gin.H { "PathName": "/login" })
 		return
 	}
 
@@ -84,7 +82,6 @@ func GetBuyList(c *gin.Context) {
 	}
 	buyListArr := user.FetchBuyLists(db)
 
-	log.Printf("%v\n", buyListArr)
 	c.HTML(http.StatusOK, "buy_list", buyListArr)
 }
 
@@ -94,13 +91,15 @@ func GetBuyListById(c *gin.Context) {
 
 	userToken, err := c.Cookie("token")
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		log.Printf("[ERROR] %v", err)
+		c.HTML(http.StatusUnauthorized, "redirect", gin.H { "PathName": "/login" })
 		return
 	}
 
 	userID, err := token.ExtractTokenId(userToken)
 	if err != nil {
-		c.AbortWithError(http.StatusUnauthorized, err)
+		log.Printf("[ERROR] %v", err)
+		c.HTML(http.StatusUnauthorized, "redirect", gin.H { "PathName": "/login" })
 		return
 	}
 	buyList := buylist.BuyList{ ID: int(buyListId) }
