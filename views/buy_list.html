@@ -2,8 +2,12 @@
 <!doctype html>
 {{ template "style" . }}
 <body>
+	<ul id="buy-list">
 	{{ range . }}
-	<a href="/buy-list/{{ .ID }}"> {{ .Name }}</a>
+		<li>
+			<a href="/buy-list/{{ .ID }}"> {{ .Name }}</a>
+		</li>
 	{{ end }}
+	</ul>
 </body>
 {{ end }}

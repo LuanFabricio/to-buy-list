@@ -3,3 +3,7 @@
 	align-items: flex-end;
 	flex-direction: column;
 }
+
+#buy-list {
+	margin-left: 20px;
+}
