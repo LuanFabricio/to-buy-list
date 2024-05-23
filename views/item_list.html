@@ -7,8 +7,9 @@
 {{ end }}
 
 {{ block "buy-items-list" . }}
+{{ template "form" . }}
 <div id="buy-item">
-	{{range . }}
+	{{range .Items }}
 	{{ template "buy-item" . }}
 	{{end}}
 </div>
@@ -72,7 +73,7 @@
 {{ end }}
 
 {{ block "oob-buy-item" . }}
-<div id="buy-item" hx-swap-oob="afterend">
+<div id="buy-item" hx-swap-oob="afterbegin">
 	{{ template "buy-item" . }}
 </div>
 {{ end }}

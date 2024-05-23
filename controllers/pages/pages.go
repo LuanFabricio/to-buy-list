@@ -85,6 +85,11 @@ func GetBuyList(c *gin.Context) {
 	c.HTML(http.StatusOK, "buy_list", buyListArr)
 }
 
+type BuyListItems struct {
+	ListId string;
+	Items []item.BuyItem;
+}
+
 func GetBuyListById(c *gin.Context) {
 	id := c.Param("id")
 	buyListId, _ := strconv.ParseInt(id, 10, 32)
@@ -123,5 +128,10 @@ func GetBuyListById(c *gin.Context) {
 	log.Println(buyList.ID)
 	log.Println(buyItemsArr)
 
-	c.HTML(http.StatusOK, "buy-items-page", buyItemsArr)
+	buyListItems := BuyListItems {
+		ListId: id,
+		Items: buyItemsArr,
+	}
+
+	c.HTML(http.StatusOK, "buy-items-page", buyListItems)
 }
