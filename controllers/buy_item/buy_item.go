@@ -70,13 +70,8 @@ func PostBuyItem(c *gin.Context) {
 			return
 		}
 
-		c.HTML(http.StatusOK, "form", nil)
+		c.HTML(http.StatusOK, "form", gin.H { "ListId": buyItem.BuyListId })
 		c.HTML(http.StatusOK, "oob-buy-item", buyItem)
-
-		if buyItem.CurrentQuantity < buyItem.MinQuantity {
-			c.HTML(http.StatusOK, "oob-to-buy-item", buyItem)
-		}
-		// c.HTML(http.StatusOK, "oob-to-buy-item", buyItem)
 		return
 	}
 
@@ -109,11 +104,10 @@ func PutBuyItem(c *gin.Context) {
 		}
 
 		updatedItem.LoadFromForm(c)
-
 		updatedItem = putBuyItem(c, updatedItem)
 
 		if updatedItem == nil {
-			c.HTML(http.StatusOK, "error-buy-item", nil)
+			c.HTML(http.StatusInternalServerError, "error-buy-item", nil)
 			return
 		}
 
