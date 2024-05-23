@@ -25,6 +25,17 @@
 <div id="new-item-form" class="card mx-auto mt-2" style="max-width: 18rem;">
 	<form class="card-body" hx-target="#new-item-form" hx-swap="outerHTML" hx-post="/buy_items" id="create-form">
 		<div class="form-floating mb-3">
+			<input
+				class="form-control"
+				name="buy_list_id"
+				id="buy_list_id"
+				type="text"
+				value="{{ .ListId }}"
+				readonly
+				>
+			<label for="new-buy-list-id">Buy list id: </label>
+		</div>
+		<div class="form-floating mb-3">
 			<input class="form-control" name="name" id="name" type="text">
 			<label for="new-name">Nome: </label>
 		</div>
