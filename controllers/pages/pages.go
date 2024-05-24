@@ -20,6 +20,9 @@ import (
 var db *sql.DB = database.GetDbConnection()
 
 func GetIndex(c *gin.Context) {
+	c.HTML(http.StatusOK, "redirect", gin.H { "PathName": "/buy-list" })
+	return
+
 	buyItems, err := item.FindItems(db, true)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": err })
