@@ -44,6 +44,17 @@ func FetchUserById(db* sql.DB, id string) (User, error){
 	return u, err
 }
 
+func FetchUserByUsername(db* sql.DB, username string) (User, error){
+	var u User
+	err := db.QueryRow(
+		`SELECT id, username, password FROM users
+		WHERE username = $1`,
+		username,
+	).Scan(&u.ID, &u.Username, &u.Password)
+
+	return u, err
+}
+
 func (u* User) FindByEmail(db* sql.DB, email string) (error) {
 	err := db.QueryRow(
 		`SELECT id, username, password FROM users
