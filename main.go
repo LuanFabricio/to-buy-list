@@ -75,6 +75,7 @@ func main() {
 	// router.GET("/to_buy_list", to_buy_list.GetToBuyList)
 	router.POST("/user", user.PostUser)
 	router.POST("/auth", user.AuthUser)
+	router.POST("/add-access/:id", buy_item.PostAddUserToList)
 
 	router.Run("localhost:3000")
 }

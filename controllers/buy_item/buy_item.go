@@ -2,12 +2,16 @@ package buy_item
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
 	"tbl-backend/database"
+	buylist "tbl-backend/models/buy_list"
 	"tbl-backend/models/item"
+	"tbl-backend/models/user"
 	// "tbl-backend/models/views"
 	// "tbl-backend/services/to_buy_list"
 )
@@ -143,6 +147,46 @@ func DeleteBuyItem(c *gin.Context) {
 
 	c.IndentedJSON(http.StatusNotFound, gin.H { "message": "Item not found." })
 	return
+}
+
+func PostAddUserToList(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 32)
+
+	username := c.PostForm("new_username")
+
+	mapListId := gin.H { "ListId": id }
+
+	user, err := user.FetchUserByUsername(db, username)
+	if err != nil {
+		log.Println(err)
+		c.HTML(http.StatusInternalServerError, "modal-template", mapListId)
+		return
+	}
+
+	buyList := buylist.BuyList { }
+	log.Printf("[INFO] Buy list ID: %d", id)
+	err = buyList.FetchByID(db, int(id))
+	if err != nil {
+		log.Println(err)
+		c.IndentedJSON(http.StatusInternalServerError, gin.H { "error": err })
+		return
+	}
+
+	haveAccess, err := buyList.UserHaveAccess(db, user.ID)
+	if err != nil {
+		log.Println(err)
+		c.HTML(http.StatusOK, "modal-template", gin.H { "ListId": err })
+		return
+	}
+
+	if haveAccess {
+		log.Println("This user already have access")
+		return
+	}
+
+	log.Println("Adicionando usuario")
+	buyList.AddAccessTo(db, user.ID)
+	c.HTML(http.StatusOK, "modal-template", mapListId)
 }
 
 func postBuyItem(c *gin.Context, newItem item.BuyItem) (*item.BuyItem){
