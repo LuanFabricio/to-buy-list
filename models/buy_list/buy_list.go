@@ -69,3 +69,16 @@ func (bl* BuyList) UserHaveAccess(db* sql.DB, userId string) (bool, error) {
 
 	return rowCount >= 1, nil
 }
+
+func (bl* BuyList) AddAccessTo(db* sql.DB, userId string) error {
+	insertString := `
+		INSERT INTO buy_list_access (buy_list_id, user_id)
+			VALUES($1, $2)
+	`
+	err := db.QueryRow(insertString, bl.ID, userId).Err()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
