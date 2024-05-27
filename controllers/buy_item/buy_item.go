@@ -2,6 +2,7 @@ package buy_item
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -12,6 +13,7 @@ import (
 	buylist "tbl-backend/models/buy_list"
 	"tbl-backend/models/item"
 	"tbl-backend/models/user"
+	"tbl-backend/services/token"
 	// "tbl-backend/models/views"
 	// "tbl-backend/services/to_buy_list"
 )
@@ -152,23 +154,41 @@ func DeleteBuyItem(c *gin.Context) {
 func PostAddUserToList(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 32)
 
-	username := c.PostForm("new_username")
-
-	mapListId := gin.H { "ListId": id }
-
-	user, err := user.FetchUserByUsername(db, username)
+	userToken, err := c.Cookie("token")
 	if err != nil {
 		log.Println(err)
-		c.HTML(http.StatusInternalServerError, "modal-template", mapListId)
 		return
 	}
 
+	userId, err := token.ExtractTokenId(userToken)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	mapListId := gin.H { "ListId": id }
+
 	buyList := buylist.BuyList { }
-	log.Printf("[INFO] Buy list ID: %d", id)
+	log.Printf("[INFO]: Buy list ID: %d", id)
 	err = buyList.FetchByID(db, int(id))
 	if err != nil {
 		log.Println(err)
 		c.IndentedJSON(http.StatusInternalServerError, gin.H { "error": err })
+		return
+	}
+
+	log.Printf("[INFO]: Owner id: %d", buyList.OwnerUserID)
+	log.Printf("[INFO]: User id: %s", userId)
+	if fmt.Sprint(buyList.OwnerUserID) != userId {
+		c.IndentedJSON(http.StatusMethodNotAllowed, gin.H { "error": "You dont have the permission" })
+		return
+	}
+
+	username := c.PostForm("new_username")
+	user, err := user.FetchUserByUsername(db, username)
+	if err != nil {
+		log.Println(err)
+		c.HTML(http.StatusInternalServerError, "modal-template", mapListId)
 		return
 	}
 
@@ -181,6 +201,7 @@ func PostAddUserToList(c *gin.Context) {
 
 	if haveAccess {
 		log.Println("This user already have access")
+		c.IndentedJSON(http.StatusForbidden, gin.H { "error":  "This user already have access" })
 		return
 	}
 
