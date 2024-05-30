@@ -138,3 +138,17 @@ func GetBuyListById(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "buy-items-page", buyListItems)
 }
+
+func GetModal(c *gin.Context) {
+	modalType := "modal-" + c.Param("id")
+
+	modalItems := gin.H {}
+	queries := c.Request.URL.Query()
+	for k := range queries {
+		modalItems[k] = queries.Get(k)
+	}
+
+	log.Println(modalType)
+
+	c.HTML(http.StatusOK, modalType, modalItems)
+}
