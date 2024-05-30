@@ -6,44 +6,17 @@
 </body>
 {{ end }}
 
-{{ block "modal-template" . }}
-<div id="add-user-modal" class="modal-dialog">
-	<form hx-post="/add-access/{{ .ListId }}" hx-target="#add-user-modal">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Add users into the list</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<div class="form-floating mb-3">
-					<input
-					class="form-control"
-					name="new_username"
-					id="new_username"
-					type="text"
-					>
-					<label for="new_username">New user:</label>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				<button type="submit" class="btn btn-primary">Add</button>
-			</div>
-		</div>
-	</form>
-</div>
-{{ end }}
-
 {{ block "buy-items-list" . }}
 <button
-    hx-target="#modals-here"
+    hx-target="#modal-add-user"
     hx-trigger="click"
+    hx-get="/modals/add-user?ListId={{ .ListId }}"
     data-bs-toggle="modal"
-    data-bs-target="#modals-here"
+    data-bs-target="#modal-add-user"
     class="btn btn-primary">Open Modal</button>
 
-<div class="modal" tabindex="-1" id="modals-here">
-	{{ template "modal-template" . }}
+<div class="modal" tabindex="-1" id="modal-add-user">
+	{{ template "modal-add-user" . }}
 </div>
 
 {{ template "form" . }}
