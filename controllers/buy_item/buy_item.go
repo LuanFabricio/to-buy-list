@@ -214,7 +214,11 @@ func PostAddUserToList(c *gin.Context) {
 	buyList.AddAccessTo(db, user.ID)
 
 	// TODO: Return a success modal
-	c.HTML(http.StatusOK, "modal-template", mapListId)
+	successMap := gin.H {
+		"Title": "Success!",
+		"success": fmt.Sprintf("User %s added with success!", user.Username),
+	}
+	c.HTML(http.StatusOK, "modal-success", successMap)// mapListId)
 }
 
 func postBuyItem(c *gin.Context, newItem item.BuyItem) (*item.BuyItem){
