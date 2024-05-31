@@ -166,14 +166,11 @@ func PostAddUserToList(c *gin.Context) {
 		return
 	}
 
-	mapListId := gin.H { "ListId": id }
-
 	buyList := buylist.BuyList { }
 	log.Printf("[INFO]: Buy list ID: %d", id)
 	err = buyList.FetchByID(db, int(id))
 	if err != nil {
 		log.Println(err)
-		// TODO: Return an error modal
 		c.IndentedJSON(http.StatusInternalServerError, gin.H { "error": err })
 		return
 	}
@@ -181,7 +178,6 @@ func PostAddUserToList(c *gin.Context) {
 	log.Printf("[INFO]: Owner id: %d", buyList.OwnerUserID)
 	log.Printf("[INFO]: User id: %s", userId)
 	if fmt.Sprint(buyList.OwnerUserID) != userId {
-		// TODO: Return an error modal
 		c.IndentedJSON(http.StatusMethodNotAllowed, gin.H { "error": "You dont have the permission" })
 		return
 	}
@@ -190,22 +186,19 @@ func PostAddUserToList(c *gin.Context) {
 	user, err := user.FetchUserByUsername(db, username)
 	if err != nil {
 		log.Println(err)
-		// TODO: Return an error modal
-		c.HTML(http.StatusInternalServerError, "modal-template", mapListId)
+		c.HTML(http.StatusOK, "modal-error", gin.H { "error": err })
 		return
 	}
 
 	haveAccess, err := buyList.UserHaveAccess(db, user.ID)
 	if err != nil {
 		log.Println(err)
-		// TODO: Return an error modal
-		c.HTML(http.StatusOK, "modal-template", gin.H { "ListId": err })
+		c.HTML(http.StatusOK, "modal-error", gin.H { "error": err })
 		return
 	}
 
 	if haveAccess {
 		log.Println("This user already have access")
-		// TODO: Return an error modal
 		c.HTML(http.StatusOK, "modal-error", gin.H { "error":  "This user already have access" })
 		return
 	}
@@ -213,7 +206,6 @@ func PostAddUserToList(c *gin.Context) {
 	log.Println("Adicionando usuario")
 	buyList.AddAccessTo(db, user.ID)
 
-	// TODO: Return a success modal
 	successMap := gin.H {
 		"Title": "Success!",
 		"success": fmt.Sprintf("User %s added with success!", user.Username),
