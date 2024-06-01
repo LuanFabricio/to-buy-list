@@ -3,7 +3,6 @@ package buy_item
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -13,6 +12,7 @@ import (
 	buylist "tbl-backend/models/buy_list"
 	"tbl-backend/models/item"
 	"tbl-backend/models/user"
+	"tbl-backend/services/logger"
 	"tbl-backend/services/token"
 	// "tbl-backend/models/views"
 	// "tbl-backend/services/to_buy_list"
@@ -156,27 +156,25 @@ func PostAddUserToList(c *gin.Context) {
 
 	userToken, err := c.Cookie("token")
 	if err != nil {
-		log.Println(err)
+		logger.Log(logger.ERROR, "%v", err)
 		return
 	}
 
 	userId, err := token.ExtractTokenId(userToken)
 	if err != nil {
-		log.Println(err)
+		logger.Log(logger.ERROR, "%v", err)
 		return
 	}
 
 	buyList := buylist.BuyList { }
-	log.Printf("[INFO]: Buy list ID: %d", id)
+	logger.Log(logger.INFO, "Buy list ID: %d", id)
 	err = buyList.FetchByID(db, int(id))
 	if err != nil {
-		log.Println(err)
+		logger.Log(logger.ERROR, "%v", err)
 		c.IndentedJSON(http.StatusInternalServerError, gin.H { "error": err })
 		return
 	}
 
-	log.Printf("[INFO]: Owner id: %d", buyList.OwnerUserID)
-	log.Printf("[INFO]: User id: %s", userId)
 	if fmt.Sprint(buyList.OwnerUserID) != userId {
 		c.IndentedJSON(http.StatusMethodNotAllowed, gin.H { "error": "You dont have the permission" })
 		return
@@ -185,25 +183,25 @@ func PostAddUserToList(c *gin.Context) {
 	username := c.PostForm("new_username")
 	user, err := user.FetchUserByUsername(db, username)
 	if err != nil {
-		log.Println(err)
+		logger.Log(logger.ERROR, "%v", err)
 		c.HTML(http.StatusOK, "modal-error", gin.H { "error": err })
 		return
 	}
 
 	haveAccess, err := buyList.UserHaveAccess(db, user.ID)
 	if err != nil {
-		log.Println(err)
+		logger.Log(logger.ERROR, "%v", err)
 		c.HTML(http.StatusOK, "modal-error", gin.H { "error": err })
 		return
 	}
 
 	if haveAccess {
-		log.Println("This user already have access")
+		logger.Log(logger.ERROR, "This user already have access")
 		c.HTML(http.StatusOK, "modal-error", gin.H { "error":  "This user already have access" })
 		return
 	}
 
-	log.Println("Adicionando usuario")
+	logger.Log(logger.INFO, "Adicionando usuario")
 	buyList.AddAccessTo(db, user.ID)
 
 	successMap := gin.H {
