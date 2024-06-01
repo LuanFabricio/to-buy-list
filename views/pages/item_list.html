@@ -20,15 +20,23 @@
 </div>
 {{ template "form" . }}
 <hr>
-<div id="buy-item">
-	{{range .Items }}
-	{{ template "buy-item" . }}
-	{{end}}
+<div class="container" id="buy-item">
+	{{ range .Grid }}
+	<div class="row">
+		{{ range . }}
+		<div class="col-sm">
+			{{ if (ne .ID "") }}
+				{{ template "buy-item" . }}
+			{{ end }}
+		</div>
+		{{ end }}
+	</div>
+	{{ end }}
 </div>
 {{ end }}
 
 {{ block "buy-item" . }}
-<div class="card text-start mx-auto mb-4" style="max-width: 35%;" id="card-{{ .ID }}">
+<div class="card text-start mx-auto mb-4" id="card-{{ .ID }}">
 	<form class="card-body">
 		[{{ .ID }}]
 		<div class="form-floating mb-3">
@@ -64,22 +72,24 @@
 				type="checkbox"
 				{{ if .SendEmail }} checked {{ end }}>
 		</div>
-		<input
-			hx-put="/buy_items/{{ .ID }}"
-			hx-target="#card-{{ .ID }}"
-			hx-swap="outerHTML"
-			hx-trigger="click"
-			class="btn btn-primary"
-			type="submit"
-			value="Update">
-		<input
-			hx-delete="/buy_items/{{ .ID }}"
-			hx-target="#card-{{ .ID }}"
-			hx-swap="outerHTML"
-			hx-trigger="click"
-			class="btn btn-danger"
-			type="submit"
-			value="Delete">
+		<div class="text-end">
+			<input
+				hx-put="/buy_items/{{ .ID }}"
+				hx-target="#card-{{ .ID }}"
+				hx-swap="outerHTML"
+				hx-trigger="click"
+				class="btn btn-primary"
+				type="submit"
+				value="Update">
+			<input
+				hx-delete="/buy_items/{{ .ID }}"
+				hx-target="#card-{{ .ID }}"
+				hx-swap="outerHTML"
+				hx-trigger="click"
+				class="btn btn-danger"
+				type="submit"
+				value="Delete">
+		</div>
 	</form>
 </div>
 {{ end }}

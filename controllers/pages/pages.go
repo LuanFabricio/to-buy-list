@@ -13,6 +13,7 @@ import (
 	"tbl-backend/models/item"
 	"tbl-backend/models/user"
 	"tbl-backend/models/views"
+	"tbl-backend/services/logger"
 	"tbl-backend/services/to_buy_list"
 	"tbl-backend/services/token"
 )
@@ -91,6 +92,7 @@ func GetBuyList(c *gin.Context) {
 type BuyListItems struct {
 	ListId string;
 	Items []item.BuyItem;
+	Grid [][]item.BuyItem;
 }
 
 func GetBuyListById(c *gin.Context) {
@@ -128,13 +130,26 @@ func GetBuyListById(c *gin.Context) {
 		log.Fatal(err)
 	}
 
-	log.Println(buyList.ID)
-	log.Println(buyItemsArr)
-
+	const MAX_ITEMS_PER_COLUMN = 5
+	rows := 1 + (len(buyItemsArr) / MAX_ITEMS_PER_COLUMN)
 	buyListItems := BuyListItems {
 		ListId: id,
 		Items: buyItemsArr,
+		Grid: make([][]item.BuyItem, rows),
 	}
+
+	for i, buyItem := range buyItemsArr {
+		colIdx := i % MAX_ITEMS_PER_COLUMN
+		rowIdx := i / MAX_ITEMS_PER_COLUMN
+
+		logger.Log(logger.INFO, "rowIdx: %d, colIdx: %d", rowIdx, colIdx)
+		if len(buyListItems.Grid[rowIdx]) == 0 {
+			buyListItems.Grid[rowIdx] = make([]item.BuyItem, MAX_ITEMS_PER_COLUMN)
+		}
+		buyListItems.Grid[rowIdx][colIdx] = buyItem
+	}
+
+	logger.Log(logger.INFO, "grid: %v", buyListItems.Grid)
 
 	c.HTML(http.StatusOK, "buy-items-page", buyListItems)
 }
