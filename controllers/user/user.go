@@ -3,10 +3,10 @@ package user
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"net/http"
 	"tbl-backend/database"
 	"tbl-backend/models/user"
+	"tbl-backend/services/logger"
 	"tbl-backend/services/token"
 
 	"crypto/sha256"
@@ -58,18 +58,18 @@ func AuthUser(c *gin.Context) {
 
 	user, err := fetchUser(login.Username)
 	if err != nil {
-		log.Printf("[ERROR] %v\n", err)
+		logger.Log(logger.ERROR, "%v", err)
 		c.Status(http.StatusNotFound)
 		return
 	}
-	log.Printf("Current: %s : %s (%s)", login.Username, login.Password, login.Username + login.Password)
+	logger.Log(logger.INFO, "Current: %s : %s (%s)", login.Username, login.Password, login.Username + login.Password)
 
-	log.Printf("User hash: %s", user.Password)
+	logger.Log(logger.INFO, "User hash: %s", user.Password)
 	currentHash := string(currentHashBytes)
-	log.Printf("Current hash: %s", currentHash)
+	logger.Log(logger.INFO, "Current hash: %s", currentHash)
 	if user.Password == currentHash {
 		c.Header("HX-Redirect", "/")
-		log.Printf("[INFO]: userID=%s", user.ID)
+		logger.Log(logger.INFO, "userID=%s", user.ID)
 		authToken, err := token.GenerateToken(user.ID)
 		if err != nil {
 			c.AbortWithStatus(http.StatusInternalServerError)
