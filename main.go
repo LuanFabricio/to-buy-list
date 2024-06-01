@@ -56,7 +56,7 @@ func main() {
 	router.Static("/static", "./views/static/")
 
 	router.Use(cors.Default())
-	router.LoadHTMLGlob("views/*.html")
+	router.LoadHTMLGlob("views/**/*.html")
 
 	// HTML pages
 	router.GET("/", pages.GetIndex)
@@ -77,5 +77,5 @@ func main() {
 	router.POST("/add-access/:id", buy_item.PostAddUserToList)
 	router.GET("/modals/:id", pages.GetModal)
 
-	router.Run("localhost:3000")
+	router.Run(":3000")
 }

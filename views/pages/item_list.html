@@ -1,20 +1,33 @@
-{{ block "to-buy-items-page" . }}
+{{ block "buy-items-page" . }}
 <!doctype html>
 {{ template "style" . }}
 <body>
-	{{ template "to-buy-items-list" . }}
+	{{ template "buy-items-list" . }}
 </body>
 {{ end }}
 
-{{ block "to-buy-items-list" . }}
+{{ block "buy-items-list" . }}
+<button
+    hx-target="#modal-add-user"
+    hx-trigger="click"
+    hx-get="/modals/add-user?ListId={{ .ListId }}"
+    data-bs-toggle="modal"
+    data-bs-target="#modal-add-user"
+    class="btn btn-primary">Add user</button>
+
+<div class="modal" tabindex="-1" id="modal-add-user">
+	{{ template "modal-add-user" . }}
+</div>
+{{ template "form" . }}
+<hr>
 <div id="buy-item">
-	{{range . }}
-	{{ template "to-buy-item" . }}
+	{{range .Items }}
+	{{ template "buy-item" . }}
 	{{end}}
 </div>
 {{ end }}
 
-{{ block "to-buy-item" . }}
+{{ block "buy-item" . }}
 <div class="card text-start mx-auto mb-4" style="max-width: 35%;" id="card-{{ .ID }}">
 	<form class="card-body">
 		[{{ .ID }}]
@@ -71,8 +84,12 @@
 </div>
 {{ end }}
 
-{{ block "oob-to-buy-item" . }}
-<div id="to-buy-item" hx-swap-oob="afterend">
-	{{ template "to-buy-item" . }}
+{{ block "oob-buy-item" . }}
+<div id="buy-item" hx-swap-oob="afterbegin">
+	{{ template "buy-item" . }}
 </div>
+{{ end }}
+
+{{ block "error-buy-item" . }}
+<div style="color: red;">Algo de certo não está errado...</div>
 {{ end }}
