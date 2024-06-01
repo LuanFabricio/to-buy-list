@@ -2,8 +2,8 @@ package user
 
 import (
 	"database/sql"
-	"log"
 	"tbl-backend/models/buy_list"
+	"tbl-backend/services/logger"
 )
 
 type User struct {
@@ -79,7 +79,7 @@ func (u* User) FetchBuyLists(db* sql.DB) []buylist.BuyList {
 		u.ID,
 	)
 	if err != nil {
-		log.Printf("[ERROR]: %v", err)
+		logger.Log(logger.ERROR, "%v", err)
 		return buyListArr
 	}
 
@@ -87,7 +87,7 @@ func (u* User) FetchBuyLists(db* sql.DB) []buylist.BuyList {
 	for rows.Next() {
 		err = rows.Scan(&buyList.ID, &buyList.Name, &buyList.OwnerUserID)
 		if err != nil {
-			log.Printf("[WARNING]: %v", err)
+			logger.Log(logger.WARNING, "%v", err)
 		} else {
 			buyListArr = append(buyListArr, buyList)
 		}

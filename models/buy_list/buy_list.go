@@ -2,8 +2,8 @@ package buylist
 
 import (
 	"database/sql"
-	"log"
 	"tbl-backend/models/item"
+	"tbl-backend/services/logger"
 )
 
 type BuyList struct {
@@ -45,7 +45,7 @@ func (bl* BuyList) FetchItems(db* sql.DB) ([]item.BuyItem, error){
 		err = rows.Scan(&buyItem.ID, &buyItem.Name, &buyItem.CurrentQuantity, &buyItem.MinQuantity, &buyItem.SendEmail)
 
 		if err != nil {
-			log.Printf("[ERROR]: %v\n", err)
+			logger.Log(logger.ERROR, "%v\n", err)
 		} else {
 			buyItemArr = append(buyItemArr, buyItem)
 		}

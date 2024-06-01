@@ -8,6 +8,7 @@ import (
 	buylist "tbl-backend/models/buy_list"
 	"tbl-backend/models/item"
 	"tbl-backend/services/email"
+	logger "tbl-backend/services/logger"
 )
 
 func SendToBuyListToEveryone(db *sql.DB) {
@@ -24,7 +25,7 @@ func SendToBuyListToEveryone(db *sql.DB) {
 		var buyListId int
 		err = buyListRow.Scan(&buyListId)
 		if err != nil {
-			log.Printf("[ERROR] %v", err)
+			logger.Log(logger.ERROR, "%v", err)
 		} else {
 			go sendEmailGoroutine(db, buyListId)
 		}
@@ -32,10 +33,10 @@ func SendToBuyListToEveryone(db *sql.DB) {
 }
 
 func sendEmailGoroutine(db *sql.DB, buyListId int) {
-	log.Printf("[INFO] Sending to buy list id %v", buyListId)
+	logger.Log(logger.INFO, "Sending to buy list id %v", buyListId)
 	err := SendToBuyListEmail(db, buyListId)
 	if err != nil {
-		log.Printf("[ERROR] %v", err)
+		logger.Log(logger.ERROR, "%v", err)
 	}
 }
 
@@ -64,7 +65,7 @@ func SendToBuyListEmail(db *sql.DB, buyListId int) error {
 		)
 	}
 	emailContent += "</ol>"
-	log.Println(emailContent)
+	logger.Log(logger.INFO, emailContent)
 
 	to, err := email.FetchUsersEmail(db, buyListId)
 	if err != nil {
