@@ -8,6 +8,7 @@ import (
 	"net/smtp"
 	"os"
 	"strings"
+	"tbl-backend/services/logger"
 )
 
 const STMP_GMAIL string = "smtp.gmail.com"
@@ -37,8 +38,8 @@ func SendEmail(to []string, subject string, msg string) error{
 
 	msg_bytes := getMsgBytes(fmt.Sprintf("%s <%s>", emailName, email), to, subject, msg)
 
-	log.Printf("Sending an email to: %s\n", strings.Join(to, ","))
-	log.Println(string(msg_bytes))
+	logger.Log(logger.INFO, "Sending an email to: %s\n", strings.Join(to, ","))
+	logger.Log(logger.INFO, string(msg_bytes))
 
 	err := smtp.SendMail(STMP_GMAIL + ":587", auth, email, to, msg_bytes)
 
