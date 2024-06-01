@@ -2,9 +2,9 @@ package token
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
+	"tbl-backend/services/logger"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -61,11 +61,11 @@ func ExtractTokenId(tokenString string) (string, error) {
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
-	log.Printf("[INFO]: claims %v\n", claims)
-	log.Printf("[INFO]: ok %v\n", ok)
+	logger.Log(logger.INFO, "claims %v", claims)
+	logger.Log(logger.INFO, "ok %v", ok)
 	if ok && token.Valid {
 		userId := fmt.Sprintf("%s", claims["id"])
-		log.Printf("[INFO]: userID: %s", userId)
+		logger.Log(logger.INFO, "userID: %s", userId)
 		return userId, nil
 	}
 
