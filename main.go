@@ -72,7 +72,6 @@ func main() {
 	router.PUT("/buy_items/:id", buy_item.PutBuyItem)
 	router.DELETE("/buy_items/:id", buy_item.DeleteBuyItem)
 	router.POST("/buy_items", buy_item.PostBuyItem)
-	// router.GET("/to_buy_list", to_buy_list.GetToBuyList)
 	router.POST("/user", user.PostUser)
 	router.POST("/auth", user.AuthUser)
 	router.POST("/add-access/:id", buy_item.PostAddUserToList)
