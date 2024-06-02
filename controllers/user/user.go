@@ -20,16 +20,17 @@ var db *sql.DB = database.GetDbConnection()
 func PostUser(c *gin.Context) {
 	var newUser user.UserDTO
 
-	if err := c.BindJSON(&newUser); err != nil {
+	if err := c.ShouldBind(&newUser); err != nil {
 		return
 	}
 
-	if !newUser.Hash {
-		hashedPassword := generateUserHash(newUser.Username, newUser.Password)
-
-		newUser.Password = string(hashedPassword)
+	if newUser.Password != newUser.ConfirmPassword {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H { "message": "Wrong password confirmation" })
+		return
 	}
 
+	currentHashBytes := generateUserHash(newUser.Username, newUser.Password)
+	newUser.Password = currentHashBytes
 	user, err := newUser.Insert(db)
 
 	if err != nil {
