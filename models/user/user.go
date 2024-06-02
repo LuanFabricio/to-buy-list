@@ -13,17 +13,18 @@ type User struct {
 }
 
 type UserDTO struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Hash bool `json:"hash"`
+	Email string `form:"email" json:"email" binding:"required"`
+	Username string `form:"username" json:"username" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+	ConfirmPassword string `form:"confirm-password" json:"confirm-password" binding:"required"`
 }
 
 func (ud* UserDTO) Insert(db* sql.DB) (*User, error) {
 	var user User
 	var err = db.QueryRow(
-		`INSERT INTO users (username, password) VALUES($1, $2)
+		`INSERT INTO users (username, password, email) VALUES($1, $2, $3)
 		RETURNING id, username, password`,
-		ud.Username, ud.Password,
+		ud.Username, ud.Password, ud.Email,
 	).Scan(&user.ID, &user.Username, &user.Password)
 
 	if err != nil {
