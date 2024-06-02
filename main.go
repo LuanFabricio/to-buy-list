@@ -63,6 +63,7 @@ func main() {
 	router.GET("/buy-items", pages.GetBuyItemsList)
 	router.GET("/to-buy-items", pages.GetToBuyItemsList)
 	router.GET("/login", pages.GetLogin)
+	router.GET("/register", pages.GetRegister)
 	router.GET("/buy-list", pages.GetBuyList)
 	router.GET("/buy-list/:id", pages.GetBuyListById)
 

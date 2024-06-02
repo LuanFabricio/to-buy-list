@@ -1,0 +1,26 @@
+{{ block "register" . }}
+{{ template "style" . }}
+<body>
+	<div id="register-form" class="card mx-auto mt-2" style="max-width: 18rem;">
+		<form class="card-body" hx-target="#register-form" hx-swap="outerHTML" hx-post="/user" id="register-form">
+			<div class="form-floating mb-3">
+				<input class="form-control" name="username" id="register" type="text">
+				<label>Login: </label>
+			</div>
+			<div class="form-floating mb-3">
+				<input class="form-control" name="email" id="register" type="text">
+				<label>E-mail: </label>
+			</div>
+			<div class="form-floating mb-3">
+				<input class="form-control" name="password" id="password" type="password">
+				<label>Password: </label>
+			</div>
+			<div class="form-floating mb-3">
+				<input class="form-control" name="confirm-password" id="confirm-password" type="password">
+				<label>Confirm password: </label>
+			</div>
+			<input class="btn btn-primary" type="submit" value="Submit">
+		</form>
+	</div>
+</body>
+{{ end }}

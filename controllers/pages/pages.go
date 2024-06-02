@@ -65,6 +65,10 @@ func GetLogin(c *gin.Context) {
 	c.HTML(http.StatusOK, "login", nil)
 }
 
+func GetRegister(c *gin.Context) {
+	c.HTML(http.StatusOK, "register", nil)
+}
+
 func GetBuyList(c *gin.Context) {
 	cookie, err := c.Cookie("token")
 	if err != nil {
@@ -142,7 +146,6 @@ func GetBuyListById(c *gin.Context) {
 		colIdx := i % MAX_ITEMS_PER_COLUMN
 		rowIdx := i / MAX_ITEMS_PER_COLUMN
 
-		logger.Log(logger.INFO, "rowIdx: %d, colIdx: %d", rowIdx, colIdx)
 		if len(buyListItems.Grid[rowIdx]) == 0 {
 			buyListItems.Grid[rowIdx] = make([]item.BuyItem, MAX_ITEMS_PER_COLUMN)
 		}
