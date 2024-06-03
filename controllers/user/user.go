@@ -38,6 +38,12 @@ func PostUser(c *gin.Context) {
 		return
 	}
 
+	if c.ContentType() == "application/x-www-form-urlencoded" {
+		c.Header("HX-Redirect", "/login")
+		c.Status(http.StatusOK)
+		return
+	}
+
 	c.IndentedJSON(http.StatusCreated, *user)
 }
 
