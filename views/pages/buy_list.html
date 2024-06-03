@@ -2,10 +2,21 @@
 <!doctype html>
 {{ template "style" . }}
 <body>
+	<button
+	    hx-target="#modal-create-to-buy-list"
+	    hx-trigger="click"
+	    hx-get="/modals/create-to-buy-list"
+	    data-bs-toggle="modal"
+	    data-bs-target="#modal-create-to-buy-list"
+	    class="btn btn-primary">Create a buy list</button>
+
+	<div class="modal" tabindex="-1" id="modal-create-to-buy-list">
+		{{ template "modal-create-to-buy-list" . }}
+	</div>
 	<ul id="buy-list">
-	{{ range . }}
+	{{ range $buyList := .BuyListArr }}
 		<li>
-			<a href="/buy-list/{{ .ID }}"> {{ .Name }}</a>
+			<a href="/buy-list/{{ $buyList.ID }}"> {{ $buyList.Name }}</a>
 		</li>
 	{{ end }}
 	</ul>

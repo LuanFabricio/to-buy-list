@@ -59,3 +59,31 @@
 	</form>
 </div>
 {{ end }}
+
+{{ block "modal-create-to-buy-list" . }}
+<div id="create-to-buy-list-modal" class="modal-dialog">
+	<form hx-post="/buy_list" hx-target="#create-to-buy-list-modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Add users into the list</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<div class="form-floating mb-3">
+					<input
+					class="form-control"
+					name="name"
+					id="buy_list_name"
+					type="text"
+					>
+					<label for="buy_list_name">Buy list name:</label>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="submit" class="btn btn-primary">Add</button>
+			</div>
+		</div>
+	</form>
+</div>
+{{ end }}
