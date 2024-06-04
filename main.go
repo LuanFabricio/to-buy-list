@@ -9,6 +9,7 @@ import (
 	"github.com/joho/godotenv"
 
 	"tbl-backend/controllers/buy_item"
+	"tbl-backend/controllers/buy_list"
 	"tbl-backend/controllers/pages"
 	"tbl-backend/controllers/user"
 	"tbl-backend/database"
@@ -77,6 +78,7 @@ func main() {
 	router.POST("/auth", user.AuthUser)
 	router.POST("/add-access/:id", buy_item.PostAddUserToList)
 	router.GET("/modals/:id", pages.GetModal)
+	router.POST("/buy_list", buy_list.PostBuyList)
 
 	router.Run(":3000")
 }
