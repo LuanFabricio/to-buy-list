@@ -7,9 +7,9 @@ import (
 )
 
 type BuyList struct {
-	ID int
-	Name string
-	OwnerUserID int
+	ID int `form:"id" json:"id" binding:"-"`
+	Name string `form:"name" json:"name" binding:"required"`
+	OwnerUserID int `form:"ower_user_id" json:"ower_user_id" binding:"-"`
 }
 
 func (bl* BuyList) FetchByID(db* sql.DB, id int) error {
@@ -81,4 +81,26 @@ func (bl* BuyList) AddAccessTo(db* sql.DB, userId string) error {
 	}
 
 	return nil
+}
+
+func (bl* BuyList) Insert(db* sql.DB) (*BuyList, error) {
+	logger.Log(logger.INFO, "Owner User ID: %d", bl.OwnerUserID)
+
+	logger.Log(logger.INFO,
+		"INSERT INTO buy_list (name, owner_user_id) VALUES(%v, %v) RETURNING id",
+		bl.Name,
+		bl.OwnerUserID,
+	)
+
+	insertString := `
+		INSERT INTO buy_list (name, owner_user_id)
+			VALUES($1, $2)
+			RETURNING id
+	`
+	err := db.QueryRow(insertString, bl.Name, bl.OwnerUserID).Scan(&bl.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return bl, nil
 }
