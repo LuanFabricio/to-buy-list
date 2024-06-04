@@ -90,7 +90,12 @@ func GetBuyList(c *gin.Context) {
 	}
 	buyListArr := user.FetchBuyLists(db)
 
-	c.HTML(http.StatusOK, "buy_list", buyListArr)
+	buyListData := gin.H {
+		"UserId": userId,
+		"BuyListArr": buyListArr,
+	}
+
+	c.HTML(http.StatusOK, "buy_list", buyListData)
 }
 
 type BuyListItems struct {
