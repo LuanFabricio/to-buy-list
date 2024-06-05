@@ -115,3 +115,20 @@ func (bl* BuyList) Delete(db *sql.DB) error {
 	err := db.QueryRow(deleteString, bl.ID).Scan(&bl.ID, &bl.Name, &bl.OwnerUserID)
 	return err
 }
+
+func FetchBuyListFromId(db *sql.DB, ID int) (*BuyList, error) {
+	var bl BuyList
+
+	selectString := `
+		SELECT
+			id, name, owner_user_id
+		FROM buy_list
+		WHERE id = $1
+	`
+	err := db.QueryRow(selectString, ID).Scan(&bl.ID, &bl.Name, &bl.OwnerUserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &bl, nil
+}
