@@ -3,22 +3,31 @@
 {{ template "style" . }}
 <body>
 	<button
-	    hx-target="#modal-create-to-buy-list"
-	    hx-trigger="click"
-	    hx-get="/modals/create-to-buy-list"
-	    data-bs-toggle="modal"
-	    data-bs-target="#modal-create-to-buy-list"
-	    class="btn btn-primary">Create a buy list</button>
+		hx-target="#modal-create-to-buy-list"
+		hx-trigger="click"
+		hx-get="/modals/create-to-buy-list"
+		data-bs-toggle="modal"
+		data-bs-target="#modal-create-to-buy-list"
+		class="btn btn-primary">Create a buy list</button>
 
 	<div class="modal" tabindex="-1" id="modal-create-to-buy-list">
 		{{ template "modal-create-to-buy-list" . }}
 	</div>
 	<ul id="buy-list">
-	{{ range $buyList := .BuyListArr }}
-		<li>
-			<a href="/buy-list/{{ $buyList.ID }}"> {{ $buyList.Name }}</a>
-		</li>
-	{{ end }}
+		{{ range $buyList := .BuyListArr }}
+		<div id="buy-list-{{ $buyList.ID }}">
+			<li>
+				<a href="/buy-list/{{ $buyList.ID }}"> {{ $buyList.Name }}</a>
+				<!--- TODO(luan): Move to a modal --->
+				<button
+					class="button button-error"
+					hx-delete="/buy_list/{{ $buyList.ID }}"
+					hx-target="#buy-list-{{ $buyList.ID }}">
+					Delete
+				</button>
+			</li>
+		</div>
+		{{ end }}
 	</ul>
 </body>
 {{ end }}
