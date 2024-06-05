@@ -79,6 +79,7 @@ func main() {
 	router.POST("/add-access/:id", buy_item.PostAddUserToList)
 	router.GET("/modals/:id", pages.GetModal)
 	router.POST("/buy_list", buy_list.PostBuyList)
+	router.DELETE("/buy_list/:id", buy_list.DeleteBuyList)
 
 	router.Run(":3000")
 }

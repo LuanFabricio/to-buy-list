@@ -60,3 +60,25 @@ func PostBuyList(c *gin.Context) {
 	c.Header("HX-Redirect", "/buy-list")
 	c.Status(http.StatusOK)
 }
+
+func DeleteBuyList(c *gin.Context) {
+	idStr := c.Param("id")
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		logger.Log(logger.INFO, "Error! %v", err)
+		c.Status(http.StatusInternalServerError)
+	}
+
+	buyList := buylist.BuyList {
+		ID: id,
+	}
+	err = buyList.Delete(db)
+	if err != nil {
+		logger.Log(logger.INFO, "Error! %v", err)
+		c.Status(http.StatusInternalServerError)
+		return
+	}
+
+	c.Status(http.StatusOK)
+}
