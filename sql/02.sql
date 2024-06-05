@@ -4,4 +4,5 @@ CREATE TABLE IF NOT EXISTS buy_list(
 	owner_user_id SERIAL,
 	CONSTRAINT fk_owner_user_id
 		FOREIGN KEY (owner_user_id)
-		REFERENCES users(id))
+		REFERENCES users(id)
+		ON DELETE CASCADE)
