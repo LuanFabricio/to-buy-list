@@ -90,8 +90,9 @@ func GetBuyList(c *gin.Context) {
 	}
 	buyListArr := user.FetchBuyLists(db)
 
+	userIdInt, err := strconv.Atoi(userId)
 	buyListData := gin.H {
-		"UserId": userId,
+		"UserId": userIdInt,
 		"BuyListArr": buyListArr,
 	}
 
