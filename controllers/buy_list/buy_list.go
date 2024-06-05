@@ -64,15 +64,46 @@ func PostBuyList(c *gin.Context) {
 func DeleteBuyList(c *gin.Context) {
 	idStr := c.Param("id")
 
+	userToken, err := c.Cookie("token")
+	if err != nil {
+		logger.Log(logger.INFO, "Error! %v", err)
+		c.Status(http.StatusUnauthorized)
+		return
+	}
+
+	userIdStr, err := token.ExtractTokenId(userToken)
+	if err != nil {
+		logger.Log(logger.INFO, "Error! %v", err)
+		c.Status(http.StatusUnauthorized)
+		return
+	}
+
+	userId, err := strconv.Atoi(userIdStr)
+	if err != nil {
+		logger.Log(logger.INFO, "Error! %v", err)
+		c.Status(http.StatusUnauthorized)
+		return
+	}
+
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		logger.Log(logger.INFO, "Error! %v", err)
 		c.Status(http.StatusInternalServerError)
+		return
 	}
 
-	buyList := buylist.BuyList {
-		ID: id,
+	buyList, err := buylist.FetchBuyListFromId(db, id)
+	if err != nil {
+		logger.Log(logger.INFO, "Error! %v", err)
+		c.Status(http.StatusInternalServerError)
+		return
 	}
+	if buyList.OwnerUserID != userId {
+		logger.Log(logger.INFO, "This user is not a owner")
+		c.Status(http.StatusUnauthorized)
+		return
+	}
+
 	err = buyList.Delete(db)
 	if err != nil {
 		logger.Log(logger.INFO, "Error! %v", err)
