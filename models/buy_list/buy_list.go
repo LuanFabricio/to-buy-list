@@ -104,3 +104,14 @@ func (bl* BuyList) Insert(db* sql.DB) (*BuyList, error) {
 
 	return bl, nil
 }
+
+func (bl* BuyList) Delete(db *sql.DB) error {
+	deleteString := `
+		DELETE FROM buy_list
+		WHERE id = $1
+		RETURNING id, name, owner_user_id
+	`
+
+	err := db.QueryRow(deleteString, bl.ID).Scan(&bl.ID, &bl.Name, &bl.OwnerUserID)
+	return err
+}
