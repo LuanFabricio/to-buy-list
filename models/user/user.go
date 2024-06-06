@@ -8,8 +8,8 @@ import (
 
 type User struct {
 	ID string `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `form:"username" json:"username" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
 }
 
 type UserDTO struct {

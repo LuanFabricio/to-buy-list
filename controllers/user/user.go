@@ -47,14 +47,8 @@ func PostUser(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, *user)
 }
 
-// TODO(Luan): Move struct to models or refactor UserDTO
-type Login struct {
-	Username string `form:"username" json:"username" binding:"required"`
-	Password string `form:"password" json:"password" binding:"required"`
-}
-
 func AuthUser(c *gin.Context) {
-	var login Login
+	var login user.User
 
 	if err := c.ShouldBind(&login); err != nil {
 		c.Status(http.StatusBadRequest)
