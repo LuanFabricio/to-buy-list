@@ -7,4 +7,5 @@ CREATE TABLE IF NOT EXISTS items (
 	buy_list_id SERIAL,
 	CONSTRAINT fk_buy_list_id
 		FOREIGN KEY (buy_list_id)
-		REFERENCES buy_list(id))
+		REFERENCES buy_list(id)
+		ON DELETE CASCADE)
