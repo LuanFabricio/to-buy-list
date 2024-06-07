@@ -72,20 +72,21 @@ func GetRegister(c *gin.Context) {
 func GetBuyList(c *gin.Context) {
 	cookie, err := c.Cookie("token")
 	if err != nil {
-		c.HTML(http.StatusUnauthorized, "redirect", gin.H { "PathName": "/login" })
+		c.HTML(http.StatusOK, "redirect", gin.H { "PathName": "/login" })
 		return
 	}
 
 	log.Printf("[INFO]: %s\n", cookie)
 	userId, err := token.ExtractTokenId(cookie)
 	if err != nil {
-		c.HTML(http.StatusUnauthorized, "redirect", gin.H { "PathName": "/login" })
+		c.HTML(http.StatusOK, "redirect", gin.H { "PathName": "/login" })
 		return
 	}
 
 	user, err := user.FetchUserById(db, userId)
 	if err != nil {
-		c.AbortWithError(http.StatusNotFound, err)
+		// c.AbortWithError(http.StatusNotFound, err)
+		c.HTML(http.StatusOK, "redirect", gin.H { "PathName": "/login" })
 		return
 	}
 	buyListArr := user.FetchBuyLists(db)
