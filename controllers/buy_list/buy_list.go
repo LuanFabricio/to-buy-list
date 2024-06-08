@@ -2,6 +2,7 @@ package buy_list
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -44,21 +45,23 @@ func PostBuyList(c *gin.Context) {
 
 	buyList.OwnerUserID = int(userId)
 	logger.Log(logger.INFO, "BuyList: %v", buyList)
-	_, err = buyList.Insert(db)
+
+	newBuyList, err := buyList.Insert(db)
 	if err != nil {
 		c.HTML(http.StatusOK, "modal-error", gin.H { "error": err })
 		return
 	}
 
-//	succesMap := gin.H {
-//		"Title": "Success!",
-//		"success": fmt.Sprintf("Buy list %s created with success!", newBuyList.Name),
-//	}
-//	c.HTML(http.StatusOK, "modal-success", successMap)
+	succesMap := gin.H {
+		"Title": "Success!",
+		"success": fmt.Sprintf("Buy list %s created with success!", newBuyList.Name),
+	}
+	c.HTML(http.StatusOK, "modal-success-create", succesMap)
 
 	// TODO(luan): Show a succes modal and refresh the buy list area
-	c.Header("HX-Redirect", "/buy-list")
-	c.Status(http.StatusOK)
+	// c.Header("HX-Redirect", "/buy-list")
+
+	// c.Status(http.StatusOK)
 }
 
 func DeleteBuyList(c *gin.Context) {
