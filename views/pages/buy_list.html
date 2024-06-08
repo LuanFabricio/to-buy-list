@@ -13,24 +13,31 @@
 	<div class="modal" tabindex="-1" id="modal-create-to-buy-list">
 		{{ template "modal-create-to-buy-list" . }}
 	</div>
+	<div class="modal" tabindex="-1" id="modal-success-create">
+		{{ template "modal-success-create" . }}
+	</div>
 	<ul id="buy-list">
-		{{ $userId := .UserId }}
-		{{ range $buyList := .BuyListArr }}
-		<div id="buy-list-{{ $buyList.ID }}">
-			<li>
-				<a href="/buy-list/{{ $buyList.ID }}"> {{ $buyList.Name }}</a>
-				<!--- TODO(luan): Move to a modal --->
-				{{ if eq $userId $buyList.OwnerUserID }}
-				<button
-					class="button button-error"
-					hx-delete="/buy_list/{{ $buyList.ID }}"
-					hx-target="#buy-list-{{ $buyList.ID }}">
-					Delete
-				</button>
-				{{ end }}
-			</li>
-		</div>
-		{{ end }}
+		{{ template "buy-list" . }}
 	</ul>
 </body>
+{{ end }}
+
+{{ block "buy-list" . }}
+	{{ $userId := .UserId }}
+	{{ range $buyList := .BuyListArr }}
+	<div id="buy-list-{{ $buyList.ID }}">
+		<li>
+			<a href="/buy-list/{{ $buyList.ID }}"> {{ $buyList.Name }}</a>
+			<!--- TODO(luan): Move to a modal --->
+			{{ if eq $userId $buyList.OwnerUserID }}
+			<button
+				class="button button-error"
+				hx-delete="/buy_list/{{ $buyList.ID }}"
+				hx-target="#buy-list-{{ $buyList.ID }}">
+				Delete
+			</button>
+			{{ end }}
+		</li>
+	</div>
+	{{ end }}
 {{ end }}
