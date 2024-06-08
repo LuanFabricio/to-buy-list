@@ -112,14 +112,14 @@ func GetBuyListById(c *gin.Context) {
 
 	userToken, err := c.Cookie("token")
 	if err != nil {
-		log.Printf("[ERROR] %v", err)
+		logger.Log(logger.ERROR, "%v",err)
 		c.HTML(http.StatusUnauthorized, "redirect", gin.H { "PathName": "/login" })
 		return
 	}
 
 	userID, err := token.ExtractTokenId(userToken)
 	if err != nil {
-		log.Printf("[ERROR] %v", err)
+		logger.Log(logger.ERROR, "%v",err)
 		c.HTML(http.StatusUnauthorized, "redirect", gin.H { "PathName": "/login" })
 		return
 	}
@@ -160,7 +160,6 @@ func GetBuyListById(c *gin.Context) {
 	}
 
 	logger.Log(logger.INFO, "grid: %v", buyListItems.Grid)
-
 	c.HTML(http.StatusOK, "buy-items-page", buyListItems)
 }
 
@@ -176,4 +175,12 @@ func GetModal(c *gin.Context) {
 	log.Println(modalType)
 
 	c.HTML(http.StatusOK, modalType, modalItems)
+}
+
+func GetRedirect(c *gin.Context) {
+	path_name := c.Param("path_name")
+
+	path := "/" + path_name
+	c.Header("HX-Redirect", path)
+	c.Status(http.StatusOK)
 }

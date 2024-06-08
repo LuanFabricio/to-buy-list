@@ -67,6 +67,7 @@ func main() {
 	router.GET("/register", pages.GetRegister)
 	router.GET("/buy-list", pages.GetBuyList)
 	router.GET("/buy-list/:id", pages.GetBuyListById)
+	router.GET("/redirect/:path_name", pages.GetRedirect)
 
 	// Endpoints
 	router.GET("/buy_items", buy_item.GetBuyItems)
