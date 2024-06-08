@@ -87,3 +87,32 @@
 	</form>
 </div>
 {{ end }}
+
+{{ block "modal-success-create" . }}
+<div id="success-delete-modal" class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header">
+			<h5 class="modal-title">{{ .Title }}</h5>
+			<button
+				hx-get="/redirect/buy-list/"
+				type="button"
+				class="btn-close"
+				data-bs-dismiss="modal"
+				aria-label="Close">
+			</button>
+		</div>
+		<div class="modal-body">
+			{{ .success }}
+		</div>
+		<div class="modal-footer">
+			<button
+				hx-get="/redirect/buy-list/"
+				type="button"
+				class="btn btn-secondary"
+				data-bs-dismiss="modal">
+				Close
+			</button>
+		</div>
+	</div>
+</div>
+{{ end }}
