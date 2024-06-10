@@ -31,7 +31,7 @@
 			<!--- TODO(luan): Move to a modal --->
 			{{ if eq $userId $buyList.OwnerUserID }}
 			<button
-				class="button button-error"
+				class="btn btn-danger"
 				hx-delete="/buy_list/{{ $buyList.ID }}"
 				hx-target="#buy-list-{{ $buyList.ID }}">
 				Delete
