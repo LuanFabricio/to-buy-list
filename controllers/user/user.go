@@ -4,10 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
-	"tbl-backend/database"
 	"tbl-backend/models/user"
 	"tbl-backend/services/logger"
 	"tbl-backend/services/token"
+	"tbl-backend/services/database"
 
 	"crypto/sha256"
 	"encoding/hex"

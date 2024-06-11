@@ -8,8 +8,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"tbl-backend/database"
 	buylist "tbl-backend/models/buy_list"
+	"tbl-backend/services/database"
 	"tbl-backend/services/logger"
 	"tbl-backend/services/token"
 )

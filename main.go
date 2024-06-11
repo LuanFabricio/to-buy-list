@@ -12,7 +12,7 @@ import (
 	"tbl-backend/controllers/buy_list"
 	"tbl-backend/controllers/pages"
 	"tbl-backend/controllers/user"
-	"tbl-backend/database"
+	"tbl-backend/services/database"
 	"tbl-backend/services/to_buy_list"
 )
 

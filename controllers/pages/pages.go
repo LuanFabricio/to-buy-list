@@ -8,11 +8,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"tbl-backend/database"
 	buylist "tbl-backend/models/buy_list"
 	"tbl-backend/models/item"
 	"tbl-backend/models/user"
 	"tbl-backend/models/views"
+	"tbl-backend/services/database"
 	"tbl-backend/services/logger"
 	"tbl-backend/services/to_buy_list"
 	"tbl-backend/services/token"
